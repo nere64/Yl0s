@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>RitmoLab · Dashboard Personal</title>
+    <title>RitmoLab · Año 1</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='85' font-size='85' text-anchor='middle' fill='%23E8C9A3'%3E⏰%3C/text%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Nunito:wght@300;400;500;600;700&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -17,15 +17,8 @@
             padding: 28px 24px;
             min-height: 100vh;
         }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.02); }
-        }
-        @keyframes bellRing {
-            0%, 100% { transform: rotate(0deg); }
-            10%, 30%, 50% { transform: rotate(15deg); }
-            20%, 40% { transform: rotate(-15deg); }
-        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+        @keyframes bellRing { 0%, 100% { transform: rotate(0deg); } 10%, 30%, 50% { transform: rotate(15deg); } 20%, 40% { transform: rotate(-15deg); } }
         .app-container { max-width: 1400px; margin: 0 auto; }
         .hero-header {
             text-align: center;
@@ -155,15 +148,8 @@
         .calendar-day:hover { background: #F5EDE3; transform: scale(1.02); }
         .calendar-day.has-idea { background: #EBDDCB; border-color: #D4BFA8; }
         .calendar-day.today { background: #D4BFA8; color: white; }
-        .calendar-day.empty { background: transparent; border-color: transparent; }
-        .idea-badge {
-            font-size: 0.65rem;
-            display: block;
-            margin-top: 6px;
-            color: #A4815C;
-            word-break: break-word;
-            line-height: 1.2;
-        }
+        .calendar-day.empty { background: transparent; border-color: transparent; box-shadow: none; }
+        .idea-badge { font-size: 0.65rem; display: block; margin-top: 6px; color: #A4815C; word-break: break-word; line-height: 1.2; }
         .alert-banner {
             background: #FFF3E8;
             border-radius: 60px;
@@ -183,27 +169,17 @@
             margin-bottom: 20px;
             text-align: center;
         }
-        footer {
-            text-align: center;
-            margin-top: 48px;
-            color: #CCBFAD;
-            font-family: 'Caveat', cursive;
-            padding: 20px;
-            font-size: 0.9rem;
-        }
-        .loading { text-align: center; padding: 80px 20px; color: #B8A48A; }
+        footer { text-align: center; margin-top: 48px; color: #CCBFAD; font-family: 'Caveat', cursive; padding: 20px; font-size: 0.9rem; }
         @media (max-width: 900px) { .period-list { flex-direction: row; flex-wrap: wrap; } .main-content { padding: 20px; } }
-        .version-badge { font-size: 0.7rem; color: #C1A88B; margin-top: 10px; }
         .month-title { font-size: 1.1rem; font-weight: 600; color: #A4815C; margin-bottom: 12px; text-align: center; }
     </style>
 </head>
 <body>
 <div class="app-container">
     <div class="hero-header">
-        <h1><i class="fas fa-waveform"></i> RitmoLab</h1>
+        <h1><i class="fas fa-waveform"></i> RitmoLab · Año 1</h1>
         <div class="frase">ritmo, no presión · constancia, no intensidad</div>
         <div><span class="live-clock" id="liveClock"></span></div>
-        <div class="version-badge" id="versionBadge"></div>
     </div>
     <div class="dashboard">
         <div class="period-sidebar">
@@ -215,293 +191,557 @@
             </div>
         </div>
         <div class="main-content" id="mainContent">
-            <div class="loading"><i class="fas fa-spinner fa-pulse"></i> Cargando datos...</div>
+            <div style="text-align:center; padding:80px;"><i class="fas fa-spinner fa-pulse"></i> Cargando...</div>
         </div>
     </div>
-    <footer>⏰ Sistema de alertas en tiempo real · Datos actualizados anualmente</footer>
+    <footer>⏰ Sistema de alertas en tiempo real · 15 Mayo 2026 - 30 Abril 2027</footer>
 </div>
 
 <script>
-(async function() {
-    let appData = null;
-    let currentMonthIndex = 0;
-    let chartInstance = null;
-    let audioCtx = null;
-    let alarmInterval = null;
-    
+// ==================== DATOS COMPLETOS AÑO 1 ====================
+const MESES = [
+    {
+        id: 1,
+        nombre: "Mayo 2026 (15-31)",
+        tipo: "nocturno",
+        fechaInicio: "2026-05-15",
+        fechaFin: "2026-05-31",
+        horario: [
+            { hora: "11:00", actividad: "Levantar + ordenar + higiene", duracion: 30 },
+            { hora: "11:30", actividad: "Desayuno + lavar dientes", duracion: 30 },
+            { hora: "12:00", actividad: "ESTUDIO CLASES", duracion: 120 },
+            { hora: "14:00", actividad: "Almuerzo + lavar dientes", duracion: 60 },
+            { hora: "15:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "17:00", actividad: "EJERCICIO", duracion: 90 },
+            { hora: "18:30", actividad: "BLENDER", duracion: 90 },
+            { hora: "20:00", actividad: "Once + lavar dientes", duracion: 30 },
+            { hora: "20:30", actividad: "Tiempo libre", duracion: 180 },
+            { hora: "23:30", actividad: "Preparar dormir + lavar dientes", duracion: 30 },
+            { hora: "00:00", actividad: "Dormir", duracion: 660 }
+        ],
+        ideas: {
+            "1": "📹 Short: el internet se siente vacío",
+            "3": "📹 Short: NO PODEMOS DEJAR EL CELULAR",
+            "5": "📹 Short: extrañar algo que nunca pasó",
+            "7": "📹 Short: LA ANSIEDAD DEL SCROLL",
+            "9": "📹 Short: por qué todo se ve igual ahora",
+            "11": "📹 Short: YA NADIE DISFRUTA NADA",
+            "13": "📹 Short: el silencio que nos da miedo",
+            "21": "📹 Short: un adelanto de lo que viene...",
+            "28": "🎬 Largo: EL CANSANCIO DE NO HACER NADA"
+        }
+    },
+    {
+        id: 2, nombre: "Junio 2026", tipo: "estandar", fechaInicio: "2026-06-01", fechaFin: "2026-06-30",
+        horario: [
+            { hora: "08:00", actividad: "Levantar + ordenar + higiene", duracion: 30 },
+            { hora: "08:30", actividad: "Desayuno + lavar dientes", duracion: 30 },
+            { hora: "09:00", actividad: "ESTUDIO CLASES", duracion: 120 },
+            { hora: "11:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "13:00", actividad: "Almuerzo + lavar dientes", duracion: 60 },
+            { hora: "15:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "17:00", actividad: "EJERCICIO", duracion: 60 },
+            { hora: "18:00", actividad: "Once + lavar dientes", duracion: 30 },
+            { hora: "18:30", actividad: "Tiempo libre", duracion: 180 },
+            { hora: "21:30", actividad: "Preparar dormir + lavar dientes", duracion: 30 },
+            { hora: "22:00", actividad: "Dormir", duracion: 600 }
+        ],
+        ideas: {
+            "1": "📹 Short: estética de los 2000", "3": "📹 Short: ¿POR QUÉ AMAMOS LO VIEJO?",
+            "5": "📹 Short: el vhs se sentía real", "7": "📹 Short: SONIDOS QUE DAN PAZ",
+            "9": "📹 Short: extrañar algo que no pasó", "11": "📹 Short: LOS JUEGOS DE ANTES",
+            "13": "📹 Short: memorias prestadas", "28": "🎬 Largo: EXTRAÑAR UNA ÉPOCA QUE NO VIVIMOS"
+        }
+    },
+    {
+        id: 3, nombre: "Julio 2026", tipo: "estandar", fechaInicio: "2026-07-01", fechaFin: "2026-07-31",
+        horario: [
+            { hora: "08:00", actividad: "Levantar + ordenar + higiene", duracion: 30 },
+            { hora: "08:30", actividad: "Desayuno + lavar dientes", duracion: 30 },
+            { hora: "09:00", actividad: "ESTUDIO CLASES", duracion: 120 },
+            { hora: "11:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "13:00", actividad: "Almuerzo + lavar dientes", duracion: 60 },
+            { hora: "15:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "17:00", actividad: "EJERCICIO", duracion: 60 },
+            { hora: "18:00", actividad: "Once + lavar dientes", duracion: 30 },
+            { hora: "18:30", actividad: "Tiempo libre", duracion: 180 },
+            { hora: "21:30", actividad: "Preparar dormir + lavar dientes", duracion: 30 },
+            { hora: "22:00", actividad: "Dormir", duracion: 600 }
+        ],
+        ideas: {
+            "1": "📹 Short: tengo 500 amigos y nadie con quien hablar", "3": "📹 Short: EL MIEDO AL VISTO",
+            "5": "📹 Short: borré mis redes por un día", "7": "📹 Short: ESTAMOS SOLOS?",
+            "9": "📹 Short: la presión de responder", "11": "📹 Short: NADIE ESTÁ PRESENTE",
+            "13": "📹 Short: notificaciones vacías", "28": "🎬 Largo: POR QUÉ NOS SENTIMOS SOLOS ESTANDO CONECTADOS"
+        }
+    },
+    {
+        id: 4, nombre: "Agosto 2026", tipo: "estandar", fechaInicio: "2026-08-01", fechaFin: "2026-08-31",
+        horario: [
+            { hora: "08:00", actividad: "Levantar + ordenar + higiene", duracion: 30 },
+            { hora: "08:30", actividad: "Desayuno + lavar dientes", duracion: 30 },
+            { hora: "09:00", actividad: "ESTUDIO CLASES", duracion: 120 },
+            { hora: "11:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "13:00", actividad: "Almuerzo + lavar dientes", duracion: 60 },
+            { hora: "15:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "17:00", actividad: "EJERCICIO", duracion: 60 },
+            { hora: "18:00", actividad: "Once + lavar dientes", duracion: 30 },
+            { hora: "18:30", actividad: "Tiempo libre", duracion: 180 },
+            { hora: "21:30", actividad: "Preparar dormir + lavar dientes", duracion: 30 },
+            { hora: "22:00", actividad: "Dormir", duracion: 600 }
+        ],
+        ideas: {
+            "1": "📹 Short: media hora eligiendo qué ver", "3": "📹 Short: EL ALGORITMO ME CONOCE?",
+            "5": "📹 Short: demasiadas opciones", "7": "📹 Short: no quiero elegir más",
+            "9": "📹 Short: NETFLIX ME ABURRE", "11": "📹 Short: la trampa del catálogo",
+            "13": "📹 Short: CONSUMIR POR CONSUMIR", "28": "🎬 Largo: LA PARÁLISIS DE TENER TODO Y NO QUERER NADA"
+        }
+    },
+    {
+        id: 5, nombre: "Septiembre 2026", tipo: "estandar", fechaInicio: "2026-09-01", fechaFin: "2026-09-30",
+        horario: [
+            { hora: "08:00", actividad: "Levantar + ordenar + higiene", duracion: 30 },
+            { hora: "08:30", actividad: "Desayuno + lavar dientes", duracion: 30 },
+            { hora: "09:00", actividad: "ESTUDIO CLASES", duracion: 120 },
+            { hora: "11:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "13:00", actividad: "Almuerzo + lavar dientes", duracion: 60 },
+            { hora: "15:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "17:00", actividad: "EJERCICIO", duracion: 60 },
+            { hora: "18:00", actividad: "Once + lavar dientes", duracion: 30 },
+            { hora: "18:30", actividad: "Tiempo libre", duracion: 180 },
+            { hora: "21:30", actividad: "Preparar dormir + lavar dientes", duracion: 30 },
+            { hora: "22:00", actividad: "Dormir", duracion: 600 }
+        ],
+        ideas: {
+            "1": "📹 Short: pasillos vacíos", "3": "📹 Short: LUGARES QUE YA VISTE EN SUEÑOS",
+            "5": "📹 Short: el silencio de un mall de noche", "7": "📹 Short: ESPACIOS LIMINALES",
+            "9": "📹 Short: soñar con escuelas vacías", "11": "📹 Short: NO HAY NADIE AQUÍ",
+            "13": "📹 Short: la paz de lo extraño", "28": "🎬 Largo: LUGARES QUE TE HACEN SENTIR EXTRAÑO"
+        }
+    },
+    {
+        id: 6, nombre: "Octubre 2026", tipo: "estandar", fechaInicio: "2026-10-01", fechaFin: "2026-10-31",
+        horario: [
+            { hora: "08:00", actividad: "Levantar + ordenar + higiene", duracion: 30 },
+            { hora: "08:30", actividad: "Desayuno + lavar dientes", duracion: 30 },
+            { hora: "09:00", actividad: "ESTUDIO CLASES", duracion: 120 },
+            { hora: "11:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "13:00", actividad: "Almuerzo + lavar dientes", duracion: 60 },
+            { hora: "15:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "17:00", actividad: "EJERCICIO", duracion: 60 },
+            { hora: "18:00", actividad: "Once + lavar dientes", duracion: 30 },
+            { hora: "18:30", actividad: "Tiempo libre", duracion: 180 },
+            { hora: "21:30", actividad: "Preparar dormir + lavar dientes", duracion: 30 },
+            { hora: "22:00", actividad: "Dormir", duracion: 600 }
+        ],
+        ideas: {
+            "1": "📹 Short: odio ser productivo", "3": "📹 Short: PERDER EL TIEMPO ES NECESARIO",
+            "5": "📹 Short: no eres una máquina", "7": "📹 Short: el cansancio de los 20 años",
+            "9": "📹 Short: DÍAS DE NO HACER NADA", "11": "📹 Short: la culpa de descansar",
+            "13": "📹 Short: STOP HUSTLE CULTURE", "28": "🎬 Largo: LA MENTIRA DE QUE SIEMPRE DEBES HACER ALGO"
+        }
+    },
+    {
+        id: 7, nombre: "Noviembre 2026", tipo: "estandar", fechaInicio: "2026-11-01", fechaFin: "2026-11-30",
+        horario: [
+            { hora: "08:00", actividad: "Levantar + ordenar + higiene", duracion: 30 },
+            { hora: "08:30", actividad: "Desayuno + lavar dientes", duracion: 30 },
+            { hora: "09:00", actividad: "ESTUDIO CLASES", duracion: 120 },
+            { hora: "11:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "13:00", actividad: "Almuerzo + lavar dientes", duracion: 60 },
+            { hora: "15:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "17:00", actividad: "EJERCICIO", duracion: 60 },
+            { hora: "18:00", actividad: "Once + lavar dientes", duracion: 30 },
+            { hora: "18:30", actividad: "Tiempo libre", duracion: 180 },
+            { hora: "21:30", actividad: "Preparar dormir + lavar dientes", duracion: 30 },
+            { hora: "22:00", actividad: "Dormir", duracion: 600 }
+        ],
+        ideas: {
+            "1": "📹 Short: cuando el internet era divertido", "3": "📹 Short: FOROS MUERTOS",
+            "5": "📹 Short: ya no hay misterios en la web", "7": "📹 Short: la era del perfil perfecto",
+            "9": "📹 Short: INTERNET ANTES DE LAS MARCAS", "11": "📹 Short: nostalgia de msn",
+            "13": "📹 Short: LA WEB ERA MEJOR", "28": "🎬 Largo: EL INTERNET YA NO SE SIENTE IGUAL"
+        }
+    },
+    {
+        id: 8, nombre: "Diciembre 2026", tipo: "estandar", fechaInicio: "2026-12-01", fechaFin: "2026-12-31",
+        horario: [
+            { hora: "08:00", actividad: "Levantar + ordenar + higiene", duracion: 30 },
+            { hora: "08:30", actividad: "Desayuno + lavar dientes", duracion: 30 },
+            { hora: "09:00", actividad: "ESTUDIO CLASES", duracion: 120 },
+            { hora: "11:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "13:00", actividad: "Almuerzo + lavar dientes", duracion: 60 },
+            { hora: "15:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "17:00", actividad: "EJERCICIO", duracion: 60 },
+            { hora: "18:00", actividad: "Once + lavar dientes", duracion: 30 },
+            { hora: "18:30", actividad: "Tiempo libre", duracion: 180 },
+            { hora: "21:30", actividad: "Preparar dormir + lavar dientes", duracion: 30 },
+            { hora: "22:00", actividad: "Dormir", duracion: 600 }
+        ],
+        ideas: {
+            "1": "📹 Short: miedo al futuro", "3": "📹 Short: EL MUNDO SE SIENTE RÁPIDO",
+            "5": "📹 Short: ¿qué estamos haciendo aquí?", "7": "📹 Short: solo quiero estar tranquilo",
+            "9": "📹 Short: TENER 20 Y NO SABER NADA", "11": "📹 Short: la prisa de todos",
+            "13": "📹 Short: MIEDO A CRECER", "28": "🎬 Largo: COSAS QUE NOS DAN MIEDO Y NO DECIMOS"
+        }
+    },
+    {
+        id: 9, nombre: "Enero 2027", tipo: "estandar", fechaInicio: "2027-01-01", fechaFin: "2027-01-31",
+        horario: [
+            { hora: "08:00", actividad: "Levantar + ordenar + higiene", duracion: 30 },
+            { hora: "08:30", actividad: "Desayuno + lavar dientes", duracion: 30 },
+            { hora: "09:00", actividad: "ESTUDIO CLASES", duracion: 120 },
+            { hora: "11:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "13:00", actividad: "Almuerzo + lavar dientes", duracion: 60 },
+            { hora: "15:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "17:00", actividad: "EJERCICIO", duracion: 60 },
+            { hora: "18:00", actividad: "Once + lavar dientes", duracion: 30 },
+            { hora: "18:30", actividad: "Tiempo libre", duracion: 180 },
+            { hora: "21:30", actividad: "Preparar dormir + lavar dientes", duracion: 30 },
+            { hora: "22:00", actividad: "Dormir", duracion: 600 }
+        ],
+        ideas: {
+            "1": "📹 Short: mi vida no es un edit", "3": "📹 Short: FINGIR QUE TODO ES LINDO",
+            "5": "📹 Short: el costo de la estética", "7": "📹 Short: sé real",
+            "9": "📹 Short: LA DICTADURA DE LO BONITO", "11": "📹 Short: fotos que no dicen nada",
+            "13": "📹 Short: ROMANTIZAR LA TRISTEZA", "28": "🎬 Largo: POR QUÉ TODO TIENE QUE VERSE PERFECTO AHORA"
+        }
+    },
+    {
+        id: 10, nombre: "Febrero 2027", tipo: "estandar", fechaInicio: "2027-02-01", fechaFin: "2027-02-28",
+        horario: [
+            { hora: "08:00", actividad: "Levantar + ordenar + higiene", duracion: 30 },
+            { hora: "08:30", actividad: "Desayuno + lavar dientes", duracion: 30 },
+            { hora: "09:00", actividad: "ESTUDIO CLASES", duracion: 120 },
+            { hora: "11:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "13:00", actividad: "Almuerzo + lavar dientes", duracion: 60 },
+            { hora: "15:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "17:00", actividad: "EJERCICIO", duracion: 60 },
+            { hora: "18:00", actividad: "Once + lavar dientes", duracion: 30 },
+            { hora: "18:30", actividad: "Tiempo libre", duracion: 180 },
+            { hora: "21:30", actividad: "Preparar dormir + lavar dientes", duracion: 30 },
+            { hora: "22:00", actividad: "Dormir", duracion: 600 }
+        ],
+        ideas: {
+            "1": "📹 Short: demasiados colores", "3": "📹 Short: LUCES NEÓN Y CANSANCIO",
+            "5": "📹 Short: quiero ver el cielo", "7": "📹 Short: estamos sobreestimulados",
+            "9": "📹 Short: EL RUIDO DE LA CIUDAD", "11": "📹 Short: saturación visual",
+            "13": "📹 Short: NECESITO SILENCIO", "28": "🎬 Largo: EL MUNDO ES DEMASIADO RUIDOSO"
+        }
+    },
+    {
+        id: 11, nombre: "Marzo 2027", tipo: "estandar", fechaInicio: "2027-03-01", fechaFin: "2027-03-31",
+        horario: [
+            { hora: "08:00", actividad: "Levantar + ordenar + higiene", duracion: 30 },
+            { hora: "08:30", actividad: "Desayuno + lavar dientes", duracion: 30 },
+            { hora: "09:00", actividad: "ESTUDIO CLASES", duracion: 120 },
+            { hora: "11:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "13:00", actividad: "Almuerzo + lavar dientes", duracion: 60 },
+            { hora: "15:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "17:00", actividad: "EJERCICIO", duracion: 60 },
+            { hora: "18:00", actividad: "Once + lavar dientes", duracion: 30 },
+            { hora: "18:30", actividad: "Tiempo libre", duracion: 180 },
+            { hora: "21:30", actividad: "Preparar dormir + lavar dientes", duracion: 30 },
+            { hora: "22:00", actividad: "Dormir", duracion: 600 }
+        ],
+        ideas: {
+            "1": "📹 Short: amigos de internet", "3": "📹 Short: ¿CUÁNTO DURA UN MENSAJE?",
+            "5": "📹 Short: conocer a alguien de verdad", "7": "📹 Short: adiós sin despedirse",
+            "9": "📹 Short: AMOR POR DM", "11": "📹 Short: la fragilidad de un chat",
+            "13": "📹 Short: GHOSTING DIGITAL", "28": "🎬 Largo: CÓMO CAMBIÓ LA FORMA EN QUE NOS QUEREMOS"
+        }
+    },
+    {
+        id: 12, nombre: "Abril 2027", tipo: "estandar", fechaInicio: "2027-04-01", fechaFin: "2027-04-30",
+        horario: [
+            { hora: "08:00", actividad: "Levantar + ordenar + higiene", duracion: 30 },
+            { hora: "08:30", actividad: "Desayuno + lavar dientes", duracion: 30 },
+            { hora: "09:00", actividad: "ESTUDIO CLASES", duracion: 120 },
+            { hora: "11:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "13:00", actividad: "Almuerzo + lavar dientes", duracion: 60 },
+            { hora: "15:00", actividad: "BLENDER", duracion: 120 },
+            { hora: "17:00", actividad: "EJERCICIO", duracion: 60 },
+            { hora: "18:00", actividad: "Once + lavar dientes", duracion: 30 },
+            { hora: "18:30", actividad: "Tiempo libre", duracion: 180 },
+            { hora: "21:30", actividad: "Preparar dormir + lavar dientes", duracion: 30 },
+            { hora: "22:00", actividad: "Dormir", duracion: 600 }
+        ],
+        ideas: {
+            "1": "📹 Short: mirar atrás", "3": "📹 Short: LO QUE PROMETIERON Y LO QUE FUE",
+            "5": "📹 Short: un año de reflexiones", "7": "📹 Short: GRACIAS POR ESTAR",
+            "9": "📹 Short: el tiempo vuela", "11": "📹 Short: SIGO AQUÍ",
+            "13": "📹 Short: el final de una etapa", "28": "🎬 Largo: EL FUTURO QUE NOS PROMETIERON (PARTE 2)"
+        }
+    }
+];
+
+const HABITOS = [
+    { id: "levantarse", nombre: "🌅 Levantarse", hora: "08:00" },
+    { id: "desayuno", nombre: "🍳 Desayuno", hora: "08:30" },
+    { id: "estudio_clases", nombre: "📚 ESTUDIO CLASES", hora: "09:00" },
+    { id: "blender", nombre: "🎨 BLENDER", hora: "11:00" },
+    { id: "almuerzo", nombre: "🍽️ Almuerzo", hora: "13:00" },
+    { id: "ejercicio", nombre: "💪 Ejercicio", hora: "17:00" },
+    { id: "once", nombre: "☕ Once", hora: "18:00" },
+    { id: "preparar_dormir", nombre: "🛁 Preparar dormir", hora: "21:30" },
+    { id: "dormir", nombre: "😴 Dormir", hora: "22:00" }
+];
+
+// ==================== LÓGICA DE LA APP ====================
+let currentMonthIndex = 0;
+let chartInstance = null;
+let audioCtx = null;
+let alarmInterval = null;
+
+function formatFechaChilena(date) {
+    return `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}/${date.getFullYear()}`;
+}
+
+function getCurrentMonthIndex() {
+    const now = new Date();
+    for (let i = 0; i < MESES.length; i++) {
+        const inicio = new Date(MESES[i].fechaInicio);
+        const fin = new Date(MESES[i].fechaFin);
+        if (now >= inicio && now <= fin) return i;
+    }
+    return 0;
+}
+
+function getCurrentActivity(horario) {
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    for (let row of horario) {
+        let [h, m] = row.hora.split(":").map(Number);
+        let activityStart = h * 60 + m;
+        let duration = parseInt(row.duracion) || 0;
+        if (currentMinutes >= activityStart && currentMinutes < activityStart + duration) {
+            return { actividad: row.actividad, inicio: row.hora };
+        }
+    }
+    return null;
+}
+
+function playLoudBeep() {
     try {
-        const response = await fetch('data.json?v=' + Date.now());
-        if (!response.ok) throw new Error('No se pudo cargar data.json');
-        appData = await response.json();
-        document.getElementById('versionBadge').innerHTML = `📅 Datos: ${appData.version} · Actualizado: ${appData.lastUpdated}`;
-    } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('mainContent').innerHTML = `<div class="info-card"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> Error</div><p>No se pudo cargar data.json</p></div>`;
-        return;
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'square';
+        osc.frequency.value = 880;
+        gain.gain.value = 0.35;
+        osc.start();
+        gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.5);
+        osc.stop(audioCtx.currentTime + 0.5);
+        audioCtx.resume();
+    } catch(e) { console.warn("Audio no disponible"); }
+}
+
+function sendNotification(title, body) {
+    playLoudBeep();
+    if (Notification.permission === 'granted') {
+        new Notification(title, { body });
+    } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission();
     }
-    
-    const meses = appData.meses;
-    
-    function formatFechaChilena(date) {
-        return `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}/${date.getFullYear()}`;
-    }
-    
-    function getCurrentMonthIndex() {
+}
+
+function startAlarmSystem(horario) {
+    if (alarmInterval) clearInterval(alarmInterval);
+    alarmInterval = setInterval(() => {
         const now = new Date();
-        for (let i = 0; i < meses.length; i++) {
-            const inicio = new Date(meses[i].fechaInicio);
-            const fin = new Date(meses[i].fechaFin);
-            if (now >= inicio && now <= fin) return i;
+        const currentTime = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
+        const actividadAhora = horario.find(row => row.hora === currentTime);
+        if (actividadAhora) {
+            sendNotification(`🔔 RitmoLab`, `⏰ Es hora de: ${actividadAhora.actividad}`);
         }
-        return 0;
-    }
-    
-    function getCurrentActivity(horario) {
-        const now = new Date();
-        const currentMinutes = now.getHours() * 60 + now.getMinutes();
-        for (let row of horario) {
-            let [h, m] = row.hora.split(":").map(Number);
-            let activityStart = h * 60 + m;
-            let duration = parseInt(row.duracion) || 0;
-            let activityEnd = activityStart + duration;
-            if (currentMinutes >= activityStart && currentMinutes < activityEnd) {
-                return { actividad: row.actividad, inicio: row.hora };
-            }
+        const habitoAhora = HABITOS.find(h => h.hora === currentTime);
+        if (habitoAhora) {
+            sendNotification(`⏰ Recordatorio`, `${habitoAhora.nombre}`);
         }
-        return null;
+    }, 60000);
+}
+
+function renderDonut(horario) {
+    const canvas = document.getElementById('donutChart');
+    if (!canvas) return;
+    let activitySum = new Map();
+    horario.forEach(row => {
+        let act = row.actividad.split('(')[0].trim();
+        let dur = parseInt(row.duracion) || 0;
+        activitySum.set(act, (activitySum.get(act) || 0) + dur);
+    });
+    let labels = [], data = [], bgColors = [];
+    const colorMap = {
+        "Levantar + ordenar + higiene": "#E8D5CC", "Desayuno + lavar dientes": "#F5E8C7",
+        "ESTUDIO CLASES": "#C7D9C5", "BLENDER": "#B8D4E3", "EJERCICIO": "#E2C2B3",
+        "Tiempo libre": "#D6D6D6", "Almuerzo + lavar dientes": "#F0D9B5",
+        "Once + lavar dientes": "#D9C5B3", "Preparar dormir + lavar dientes": "#C5D6D9", "Dormir": "#B3C4C4"
+    };
+    for (let [act, mins] of activitySum) {
+        if (mins / 1440 < 0.02) continue;
+        labels.push(act.length > 20 ? act.slice(0,18)+"..." : act);
+        data.push(mins);
+        bgColors.push(colorMap[act] || `hsl(${(act.length * 43) % 360}, 65%, 78%)`);
     }
+    if (chartInstance) chartInstance.destroy();
+    const ctx = canvas.getContext('2d');
+    chartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: { labels, datasets: [{ data, backgroundColor: bgColors, cutout: '68%', borderWidth: 0 }] },
+        options: { plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${(ctx.raw/60).toFixed(1)}h` } } }, responsive: true }
+    });
+}
+
+function renderCalendar(mes) {
+    const inicio = new Date(mes.fechaInicio);
+    const fin = new Date(mes.fechaFin);
+    const year = inicio.getFullYear();
+    const month = inicio.getMonth();
+    const startDay = inicio.getDate();
+    const endDay = fin.getDate();
+    const firstDayOfMonth = new Date(year, month, 1);
+    const startWeekday = firstDayOfMonth.getDay();
+    const today = new Date();
+    const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+    const ideas = mes.ideas || {};
     
-    function playLoudBeep() {
-        try {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.type = 'square';
-            osc.frequency.value = 880;
-            gain.gain.value = 0.35;
-            osc.start();
-            gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.5);
-            osc.stop(audioCtx.currentTime + 0.5);
-            audioCtx.resume();
-        } catch(e) { console.warn("Audio no disponible"); }
-    }
+    let html = `<div class="month-title">📅 ${mes.nombre}</div>`;
+    html += `<div class="calendar-grid">`;
+    const diasSemana = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'];
+    diasSemana.forEach(d => html += `<div style="text-align:center;font-weight:bold; font-size:0.7rem; padding:4px;">${d}</div>`);
     
-    function sendNotification(title, body) {
-        playLoudBeep();
-        if (Notification.permission === 'granted') {
-            new Notification(title, { body });
-        } else if (Notification.permission !== 'denied') {
-            Notification.requestPermission();
-        }
-    }
+    for (let i = 0; i < startWeekday; i++) html += `<div class="calendar-day empty"></div>`;
     
-    function startAlarmSystem(horario, habitos) {
-        if (alarmInterval) clearInterval(alarmInterval);
-        alarmInterval = setInterval(() => {
-            const now = new Date();
-            const currentTime = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
-            const actividadAhora = horario.find(row => row.hora === currentTime);
-            if (actividadAhora) {
-                sendNotification(`🔔 RitmoLab · ${actividadAhora.actividad}`, `⏰ Es hora de: ${actividadAhora.actividad}`);
-            }
-            const habitoAhora = habitos?.find(h => h.hora === currentTime);
-            if (habitoAhora) {
-                sendNotification(`⏰ Recordatorio`, `${habitoAhora.nombre}`);
-            }
-        }, 60000);
-    }
-    
-    function renderDonut(horario) {
-        const canvas = document.getElementById('donutChart');
-        if (!canvas) return;
-        let activitySum = new Map();
-        horario.forEach(row => {
-            let act = row.actividad.split('(')[0].trim();
-            let dur = parseInt(row.duracion) || 0;
-            activitySum.set(act, (activitySum.get(act) || 0) + dur);
-        });
-        let labels = [], data = [], bgColors = [];
-        const colorMap = {
-            "Levantar + ordenar + higiene": "#E8D5CC", "Desayuno + lavar dientes": "#F5E8C7",
-            "ESTUDIO CLASES": "#C7D9C5", "BLENDER": "#B8D4E3", "EJERCICIO": "#E2C2B3",
-            "Tiempo libre": "#D6D6D6", "Almuerzo + lavar dientes": "#F0D9B5",
-            "Once + lavar dientes": "#D9C5B3", "Preparar dormir + lavar dientes": "#C5D6D9", "Dormir": "#B3C4C4"
-        };
-        for (let [act, mins] of activitySum) {
-            if (mins / 1440 < 0.02) continue;
-            labels.push(act.length > 20 ? act.slice(0,18)+"..." : act);
-            data.push(mins);
-            bgColors.push(colorMap[act] || `hsl(${(act.length * 43) % 360}, 65%, 78%)`);
-        }
-        if (chartInstance) chartInstance.destroy();
-        const ctx = canvas.getContext('2d');
-        chartInstance = new Chart(ctx, {
-            type: 'doughnut',
-            data: { labels, datasets: [{ data, backgroundColor: bgColors, cutout: '68%', borderWidth: 0 }] },
-            options: { plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${(ctx.raw/60).toFixed(1)}h` } } }, responsive: true }
-        });
-    }
-    
-    // Limpiar actividad para mostrar solo el nombre base
-    function cleanActivityName(name) {
-        return name.split('(')[0].trim();
-    }
-    
-    function renderCalendar(mes) {
-        const inicio = new Date(mes.fechaInicio);
-        const fin = new Date(mes.fechaFin);
-        const year = inicio.getFullYear();
-        const month = inicio.getMonth();
-        const startDay = inicio.getDate();
-        const endDay = fin.getDate();
-        const firstDayOfMonth = new Date(year, month, 1);
-        const startWeekday = firstDayOfMonth.getDay();
-        const today = new Date();
-        const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
-        const ideas = mes.ideas || {};
+    for (let d = 1; d <= endDay; d++) {
+        const isInRange = d >= startDay;
+        const isToday = isCurrentMonth && today.getDate() === d && isInRange;
+        const idea = ideas[d];
         
-        let html = `<div class="month-title">📅 ${mes.nombre}</div>`;
-        html += `<div class="calendar-grid">`;
-        const diasSemana = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'];
-        diasSemana.forEach(d => html += `<div style="text-align:center;font-weight:bold; font-size:0.7rem; padding:4px;">${d}</div>`);
-        
-        for (let i = 0; i < startWeekday; i++) html += `<div class="calendar-day empty"></div>`;
-        
-        for (let d = 1; d <= endDay; d++) {
-            const isInRange = d >= startDay;
-            const isToday = isCurrentMonth && today.getDate() === d && isInRange;
-            const idea = ideas[d];
-            
-            if (!isInRange && d < startDay) {
-                html += `<div class="calendar-day empty" style="opacity:0.3;">${d}</div>`;
-            } else {
-                html += `<div class="calendar-day ${idea ? 'has-idea' : ''} ${isToday ? 'today' : ''}">
-                            <strong>${d}</strong>
-                            ${idea ? `<span class="idea-badge">${idea.length > 30 ? idea.substring(0, 27)+'...' : idea}</span>` : ''}
-                        </div>`;
-            }
+        if (!isInRange && d < startDay) {
+            html += `<div class="calendar-day empty" style="opacity:0.3;">${d}</div>`;
+        } else {
+            html += `<div class="calendar-day ${idea ? 'has-idea' : ''} ${isToday ? 'today' : ''}">
+                        <strong>${d}</strong>
+                        ${idea ? `<span class="idea-badge">${idea.length > 30 ? idea.substring(0, 27)+'...' : idea}</span>` : ''}
+                    </div>`;
         }
-        html += `</div>`;
-        return html;
     }
+    html += `</div>`;
+    return html;
+}
+
+function renderPeriodView(monthIndex) {
+    const mes = MESES[monthIndex];
+    if (!mes) return;
+    const currentActivity = getCurrentActivity(mes.horario);
     
-    function renderPeriodView(monthIndex) {
-        const mes = meses[monthIndex];
-        if (!mes) return;
-        const horario = mes.horario.map(h => ({
-            ...h,
-            actividad: cleanActivityName(h.actividad)
-        }));
-        const currentActivity = getCurrentActivity(horario);
-        const habitos = appData.habitos;
+    const mainDiv = document.getElementById('mainContent');
+    mainDiv.innerHTML = `
+        <div class="current-activity">
+            <i class="fas fa-hourglass-half" style="font-size:1.5rem; color:#E2A468;"></i>
+            <h3 style="margin-top:8px;">MES DE HOY: ${mes.nombre}</h3>
+            <p style="font-size:1.1rem; margin-top:8px;">Ahora mismo: ${currentActivity ? currentActivity.actividad : 'Descanso o tiempo libre'}</p>
+            <small>${currentActivity ? `desde las ${currentActivity.inicio}` : 'Fuera del horario establecido'}</small>
+        </div>
         
-        const mainDiv = document.getElementById('mainContent');
-        mainDiv.innerHTML = `
-            <div class="current-activity">
-                <i class="fas fa-hourglass-half" style="font-size:1.5rem; color:#E2A468;"></i>
-                <h3 style="margin-top:8px;">MES DE HOY: ${mes.nombre}</h3>
-                <p style="font-size:1.1rem; margin-top:8px;">Ahora mismo: ${currentActivity ? currentActivity.actividad : 'Descanso o tiempo libre'}</p>
-                <small>${currentActivity ? `desde las ${currentActivity.inicio}` : 'Fuera del horario establecido'}</small>
+        <div class="info-card">
+            <div class="card-header"><i class="fas fa-info-circle"></i> Resumen · ${mes.nombre}</div>
+            <div class="info-grid">
+                <div class="info-badge"><strong>📅 Período</strong><span>${formatFechaChilena(new Date(mes.fechaInicio))} - ${formatFechaChilena(new Date(mes.fechaFin))}</span></div>
+                <div class="info-badge"><strong>💪 Ejercicio</strong><span>${mes.tipo === 'nocturno' ? "Mar, Jue, Sáb 17:00" : "Mar, Jue 17:00"}</span></div>
+                <div class="info-badge"><strong>🎨 Blender</strong><span>${mes.tipo === 'nocturno' ? "Lun/Mie/Vie 15h · Mar/Jue/Sab/Dom 18:30h" : "Lun/Vie 11h · Mie/Dom 15h"}</span></div>
+                <div class="info-badge"><strong>📚 Clases</strong><span>${mes.tipo === 'nocturno' ? "12:00 - 14:00" : "09:00 - 11:00"}</span></div>
             </div>
-            
-            <div class="info-card">
-                <div class="card-header"><i class="fas fa-info-circle"></i> Resumen · ${mes.nombre}</div>
-                <div class="info-grid">
-                    <div class="info-badge"><strong>📅 Período</strong><span>${formatFechaChilena(new Date(mes.fechaInicio))} - ${formatFechaChilena(new Date(mes.fechaFin))}</span></div>
-                    <div class="info-badge"><strong>💪 Ejercicio</strong><span>${mes.tipo === 'nocturno' ? "Mar, Jue, Sáb 17:00" : "Mar, Jue 17:00"}</span></div>
-                    <div class="info-badge"><strong>🎨 Blender</strong><span>${mes.tipo === 'nocturno' ? "Lun/Mie/Vie 15h · Mar/Jue/Sab/Dom 18:30h" : "Lun/Vie 11h · Mie/Dom 15h"}</span></div>
-                    <div class="info-badge"><strong>📚 Clases</strong><span>${mes.tipo === 'nocturno' ? "12:00 - 14:00" : "09:00 - 11:00"}</span></div>
-                </div>
-            </div>
-            
-            <div class="info-card">
-                <div class="card-header"><i class="fas fa-table-list"></i> Horario Diario</div>
-                <div style="overflow-x:auto;">
-                    <table class="horario-table">
-                        <thead><tr><th>Hora</th><th>Actividad</th><th>Duración</th></tr></thead>
-                        <tbody>
-                            ${horario.map(row => `<tr><td style="font-weight:500;">${row.hora}</td><td>${row.actividad}</td><td>${row.duracion} min</td></tr>`).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <div class="info-card">
-                <div class="card-header"><i class="fas fa-chart-pie"></i> Distribución del día</div>
-                <div class="donut-wrapper"><canvas id="donutChart" width="240" height="240"></canvas></div>
-            </div>
-            
-            <div class="info-card">
-                <div class="card-header"><i class="fab fa-youtube"></i> Calendario de Contenido · Ideas</div>
-                ${renderCalendar(mes)}
-                <div style="margin-top:12px; font-size:0.7rem; color:#B8A48A;"><i class="fas fa-lightbulb"></i> Días con ideas: fondo color crema</div>
-            </div>
-        `;
+        </div>
         
-        renderDonut(horario);
-        startAlarmSystem(horario, habitos);
-    }
-    
-    function buildSidebar() {
-        const container = document.getElementById('periodList');
-        if (!container) return;
-        container.innerHTML = '';
-        meses.forEach((mes, idx) => {
-            const div = document.createElement('div');
-            div.className = `period-item ${idx === currentMonthIndex ? 'active' : ''}`;
-            div.innerHTML = `<i class="fas ${mes.tipo === 'nocturno' ? 'fa-moon' : 'fa-sun'}"></i><span>${mes.nombre}</span>`;
-            div.addEventListener('click', () => {
-                currentMonthIndex = idx;
-                buildSidebar();
-                renderPeriodView(idx);
-            });
-            container.appendChild(div);
-        });
-    }
-    
-    function updateClock() {
-        const clockEl = document.getElementById('liveClock');
-        if (clockEl) {
-            const now = new Date();
-            clockEl.innerHTML = now.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        }
-        requestAnimationFrame(() => setTimeout(updateClock, 1000));
-    }
-    
-    currentMonthIndex = getCurrentMonthIndex();
-    buildSidebar();
-    renderPeriodView(currentMonthIndex);
-    updateClock();
-    
-    if (Notification.permission === 'default') Notification.requestPermission();
-    
-    for (let i = 0; i < 40; i++) {
-        const p = document.createElement('div');
-        p.style.position = 'fixed';
-        p.style.width = p.style.height = Math.random() * 5 + 2 + 'px';
-        p.style.backgroundColor = `rgba(216, 184, 148, ${Math.random() * 0.3})`;
-        p.style.borderRadius = '50%';
-        p.style.left = Math.random() * 100 + '%';
-        p.style.bottom = '-20px';
-        p.style.animation = `floatParticle ${Math.random() * 15 + 10}s linear infinite`;
-        p.style.pointerEvents = 'none';
-        p.style.zIndex = '0';
-        document.body.appendChild(p);
-    }
-    
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes floatParticle {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.5; }
-            90% { opacity: 0.3; }
-            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
-        }
+        <div class="info-card">
+            <div class="card-header"><i class="fas fa-table-list"></i> Horario Diario</div>
+            <div style="overflow-x:auto;">
+                <table class="horario-table">
+                    <thead><tr><th>Hora</th><th>Actividad</th><th>Duración</th></tr></thead>
+                    <tbody>
+                        ${mes.horario.map(row => `<tr><td style="font-weight:500;">${row.hora}</td><td>${row.actividad}</td><td>${row.duracion} min</td></tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="info-card">
+            <div class="card-header"><i class="fas fa-chart-pie"></i> Distribución del día</div>
+            <div class="donut-wrapper"><canvas id="donutChart" width="240" height="240"></canvas></div>
+        </div>
+        
+        <div class="info-card">
+            <div class="card-header"><i class="fab fa-youtube"></i> Calendario de Contenido · Ideas</div>
+            ${renderCalendar(mes)}
+            <div style="margin-top:12px; font-size:0.7rem; color:#B8A48A;"><i class="fas fa-lightbulb"></i> Días con ideas: fondo color crema (Shorts días 1,3,5,7,9,11,13 · Largo día 28)</div>
+        </div>
     `;
-    document.head.appendChild(style);
-})();
+    
+    renderDonut(mes.horario);
+    startAlarmSystem(mes.horario);
+}
+
+function buildSidebar() {
+    const container = document.getElementById('periodList');
+    if (!container) return;
+    container.innerHTML = '';
+    MESES.forEach((mes, idx) => {
+        const div = document.createElement('div');
+        div.className = `period-item ${idx === currentMonthIndex ? 'active' : ''}`;
+        div.innerHTML = `<i class="fas ${mes.tipo === 'nocturno' ? 'fa-moon' : 'fa-sun'}"></i><span>${mes.nombre}</span>`;
+        div.addEventListener('click', () => {
+            currentMonthIndex = idx;
+            buildSidebar();
+            renderPeriodView(idx);
+        });
+        container.appendChild(div);
+    });
+}
+
+function updateClock() {
+    const clockEl = document.getElementById('liveClock');
+    if (clockEl) {
+        const now = new Date();
+        clockEl.innerHTML = now.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+    requestAnimationFrame(() => setTimeout(updateClock, 1000));
+}
+
+// Inicialización
+currentMonthIndex = getCurrentMonthIndex();
+buildSidebar();
+renderPeriodView(currentMonthIndex);
+updateClock();
+if (Notification.permission === 'default') Notification.requestPermission();
+
+// Partículas decorativas
+for (let i = 0; i < 40; i++) {
+    const p = document.createElement('div');
+    p.style.position = 'fixed';
+    p.style.width = p.style.height = Math.random() * 5 + 2 + 'px';
+    p.style.backgroundColor = `rgba(216, 184, 148, ${Math.random() * 0.3})`;
+    p.style.borderRadius = '50%';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.bottom = '-20px';
+    p.style.animation = `floatParticle ${Math.random() * 15 + 10}s linear infinite`;
+    p.style.pointerEvents = 'none';
+    p.style.zIndex = '0';
+    document.body.appendChild(p);
+}
+
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes floatParticle {
+        0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+        10% { opacity: 0.5; }
+        90% { opacity: 0.3; }
+        100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
 </script>
 </body>
 </html>
