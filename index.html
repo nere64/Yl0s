@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>RitmoLab · Rutinas y YouTube</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='85' font-size='85' text-anchor='middle' fill='%23B89A7A'%3E🕰️%3C/text%3E%3C/svg%3E">
+    <!-- Google Fonts + Font Awesome (icons) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Chart.js CDN para el donut -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #FDFBF7;
+            background-image: radial-gradient(#E8E2D8 0.8px, transparent 0.8px);
+            background-size: 24px 24px;
+            font-family: 'Inter', 'Nunito', sans-serif;
+            color: #2C2A29;
+            line-height: 1.4;
+            padding: 24px 20px;
+        }
+
+        /* Layout principal */
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(253, 251, 247, 0.7);
+            border-radius: 28px;
+            backdrop-filter: blur(2px);
+        }
+
+        .dashboard {
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+        }
+
+        /* Columna izquierda: períodos */
+        .period-sidebar {
+            flex: 1.2;
+            min-width: 240px;
+            background: white;
+            border-radius: 24px;
+            padding: 20px 12px;
+            border: 1px solid #E3DDD2;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+
+        .period-sidebar h2 {
+            font-weight: 500;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding-left: 12px;
+            color: #5C4E3D;
+            letter-spacing: -0.2px;
+        }
+
+        .period-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .period-item {
+            padding: 12px 16px;
+            border-radius: 60px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #F9F6F0;
+            color: #3E3A35;
+            border: 1px solid #EBE3D8;
+            font-size: 0.9rem;
+        }
+
+        .period-item.active {
+            background: #EADBCE;
+            border-color: #CBBAA5;
+            color: #332D26;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+
+        .period-item:hover:not(.active) {
+            background: #F1EAE2;
+            transform: translateX(2px);
+        }
+
+        /* columna derecha principal */
+        .main-content {
+            flex: 3;
+            min-width: 300px;
+            background: white;
+            border-radius: 28px;
+            border: 1px solid #E9E2D8;
+            padding: 24px 28px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+        }
+
+        /* tabs responsive: en móvil menu hamburguesa */
+        @media (max-width: 768px) {
+            body { padding: 16px; }
+            .dashboard { flex-direction: column; }
+            .period-sidebar {
+                width: 100%;
+                padding: 12px;
+            }
+            .period-list {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .period-item {
+                font-size: 0.8rem;
+                padding: 8px 14px;
+            }
+            .main-content { padding: 18px; }
+        }
+
+        /* Tarjetas y tablas */
+        .section-card {
+            background: #FEFCF9;
+            border-radius: 20px;
+            border: 1px solid #EFE9E2;
+            padding: 18px 20px;
+            margin-bottom: 28px;
+            transition: all 0.1s;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            border-left: 4px solid #D9C7B2;
+            padding-left: 14px;
+        }
+
+        .horario-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .horario-table th, .horario-table td {
+            border-bottom: 1px solid #EDE5DB;
+            padding: 12px 8px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .horario-table th {
+            font-weight: 600;
+            color: #7B6B58;
+        }
+
+        [contenteditable="true"] {
+            background: #FFFBF5;
+            padding: 6px 8px;
+            border-radius: 12px;
+            outline: none;
+            transition: 0.1s;
+            cursor: text;
+        }
+        [contenteditable="true"]:focus {
+            background: #FFF9EE;
+            box-shadow: 0 0 0 2px #E9DACA;
+        }
+
+        .btn-icon {
+            background: none;
+            border: 1px solid #E2D9CF;
+            padding: 6px 12px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #5B4B38;
+        }
+        .btn-icon i { margin-right: 6px; }
+        .btn-icon:hover {
+            background: #F3EDE6;
+            border-color: #C9BCAB;
+        }
+
+        .donut-container {
+            max-width: 260px;
+            margin: 0 auto 20px auto;
+        }
+
+        .youtube-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .youtube-event {
+            background: #F8F3EC;
+            padding: 8px 14px;
+            border-radius: 48px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
+        }
+
+        .habit-check-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 6px 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 32px;
+            font-size: 0.75rem;
+            color: #BBB2A4;
+            border-top: 1px solid #EFEAE2;
+            padding-top: 20px;
+        }
+
+        /* modal alarmas */
+        .modal {
+            display: none;
+            position: fixed;
+            top:0; left:0;
+            width:100%; height:100%;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-card {
+            background: white;
+            max-width: 460px;
+            width: 90%;
+            border-radius: 28px;
+            padding: 24px;
+            border: 1px solid #E1D7CD;
+        }
+        button {
+            background: #EDE3D9;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 60px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .mt-3 { margin-top: 16px; }
+        .text-small { font-size: 0.75rem; color: #8F8272; }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="dashboard">
+        <!-- Sidebar periodos -->
+        <div class="period-sidebar">
+            <h2><i class="fas fa-calendar-alt"></i> Períodos</h2>
+            <div class="period-list" id="periodList"></div>
+            <div class="flex-between mt-3" style="margin-top: 20px;">
+                <button id="exportBackupBtn" class="btn-icon"><i class="fas fa-download"></i> Exportar</button>
+                <button id="importBackupBtn" class="btn-icon"><i class="fas fa-upload"></i> Importar</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;">
+            </div>
+        </div>
+
+        <!-- Área de contenido dinámico -->
+        <div class="main-content" id="mainContent">
+            <div style="text-align: center; padding: 60px 20px;">Selecciona un período para empezar</div>
+        </div>
+    </div>
+    <footer>ritmo, no presión · constancia, no intensidad</footer>
+</div>
+
+<!-- Modal Alarmas -->
+<div id="alarmModal" class="modal">
+    <div class="modal-card">
+        <div class="flex-between"><h3><i class="fas fa-bell"></i> Alarmas / Recordatorios</h3><button id="closeModalBtn">&times;</button></div>
+        <div id="alarmsList"></div>
+        <div class="mt-3">
+            <input type="time" id="alarmTime" placeholder="HH:MM" step="60">
+            <input type="text" id="alarmMsg" placeholder="Mensaje" style="padding: 6px; margin: 4px 0;">
+            <input type="text" id="alarmDays" placeholder="Días (0=Lun, opcional: 0,1,2)">
+            <button id="addAlarmBtn">+ Agregar alarma</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- CONSTANTES Y DATOS BASE ----------
+    const PERIODOS = [
+        "15 al 31 de mayo 2026 (Horario Nocturno)",
+        "1 al 30 de junio 2026 (Estándar)","1 al 31 de julio 2026 (Estándar)","1 al 31 de agosto 2026 (Estándar)",
+        "1 al 30 de septiembre 2026 (Estándar)","1 al 31 de octubre 2026 (Estándar)","1 al 30 de noviembre 2026 (Estándar)",
+        "1 al 31 de diciembre 2026 (Estándar)","1 al 31 de enero 2027 (Estándar)","1 al 28 de febrero 2027 (Estándar)",
+        "1 al 31 de marzo 2027 (Estándar)","1 al 30 de abril 2027 (Estándar)"
+    ];
+    // Plantillas por defecto (Nocturno especial vs Estándar)
+    const getDefaultHorario = (periodName) => {
+        const isNocturno = periodName.includes("Nocturno");
+        if (isNocturno) {
+            return [
+                { hora: "20:00", actividad: "Levantarse/Higiene", duracion: 30, notas: "Despertar" },
+                { hora: "20:30", actividad: "Desayuno", duracion: 30, notas: "Energía" },
+                { hora: "21:00", actividad: "Estudio cocina", duracion: 90, notas: "Técnicas" },
+                { hora: "22:30", actividad: "Blender", duracion: 90, notas: "3D" },
+                { hora: "00:00", actividad: "Ejercicio", duracion: 45, notas: "Rutina" },
+                { hora: "01:00", actividad: "Tiempo libre", duracion: 60, notas: "Descanso" },
+                { hora: "02:00", actividad: "Almuerzo", duracion: 30, notas: "Comida" },
+                { hora: "02:30", actividad: "Preparar dormir", duracion: 30, notas: "Higiene" },
+                { hora: "03:00", actividad: "Dormir", duracion: 480, notas: "Sueño reparador" }
+            ];
+        } else {
+            return [
+                { hora: "07:00", actividad: "Levantarse/Higiene", duracion: 30, notas: "" },
+                { hora: "07:30", actividad: "Desayuno", duracion: 30, notas: "" },
+                { hora: "08:00", actividad: "Estudio cocina", duracion: 90, notas: "" },
+                { hora: "09:30", actividad: "Blender", duracion: 120, notas: "" },
+                { hora: "11:30", actividad: "Ejercicio", duracion: 45, notas: "" },
+                { hora: "12:30", actividad: "Almuerzo", duracion: 45, notas: "" },
+                { hora: "13:15", actividad: "Tiempo libre", duracion: 60, notas: "" },
+                { hora: "14:15", actividad: "Estudio cocina", duracion: 90, notas: "" },
+                { hora: "15:45", actividad: "Blender", duracion: 90, notas: "" },
+                { hora: "17:15", actividad: "Once", duracion: 30, notas: "" },
+                { hora: "17:45", actividad: "Tiempo libre", duracion: 60, notas: "" },
+                { hora: "19:00", actividad: "Preparar dormir", duracion: 30, notas: "" },
+                { hora: "19:30", actividad: "Dormir", duracion: 540, notas: "" }
+            ];
+        }
+    };
+
+    // mapa colores fijos
+    const fixedColors = {
+        "Levantarse/Higiene": "#E8D5CC","Desayuno": "#F5E8C7","Estudio cocina": "#C7D9C5","Blender": "#B8D4E3",
+        "Ejercicio": "#E2C2B3","Tiempo libre": "#D6D6D6","Almuerzo": "#F0D9B5","Once": "#D9C5B3",
+        "Preparar dormir": "#C5D6D9","Dormir": "#B3C4C4"
+    };
+    let colorMap = {...fixedColors};
+
+    // ---------- ESTADO GLOBAL ----------
+    let currentPeriod = PERIODOS[0];
+    let horariosData = {};      // key: periodo nombre, value: array filas
+    let youtubeEvents = {};     // key: periodo+mes => array eventos custom {dia, titulo, tipo}
+    let alarms = [];            // globales: {hora, mensaje, dias}
+    let habitsData = {};        // {fechaYYYY-MM-DD: { ejercicio:bool, estudiar:bool, blender:bool, dormir8h:bool, sinPantallas:bool } }
+    
+    // carga inicial
+    function loadFromLocalStorage() {
+        const storedHorarios = localStorage.getItem("RitmoLab_horarios");
+        if(storedHorarios) horariosData = JSON.parse(storedHorarios);
+        const storedYoutube = localStorage.getItem("RitmoLab_youtube");
+        if(storedYoutube) youtubeEvents = JSON.parse(storedYoutube);
+        const storedAlarms = localStorage.getItem("RitmoLab_alarms");
+        if(storedAlarms) alarms = JSON.parse(storedAlarms);
+        const storedHabits = localStorage.getItem("RitmoLab_habits");
+        if(storedHabits) habitsData = JSON.parse(storedHabits);
+        // Asegurar que cada periodo tenga al menos la tabla por defecto
+        PERIODOS.forEach(p => {
+            if(!horariosData[p]) horariosData[p] = getDefaultHorario(p);
+        });
+        saveAllToLocal();
+    }
+    function saveAllToLocal() {
+        localStorage.setItem("RitmoLab_horarios", JSON.stringify(horariosData));
+        localStorage.setItem("RitmoLab_youtube", JSON.stringify(youtubeEvents));
+        localStorage.setItem("RitmoLab_alarms", JSON.stringify(alarms));
+        localStorage.setItem("RitmoLab_habits", JSON.stringify(habitsData));
+    }
+    function getCurrentMonthKey(periodName) {
+        // extrae el mes y año para el calendario youtube
+        const match = periodName.match(/(\d+)\s*al\s*(\d+)\s*de\s*([a-zA-Z]+)\s*(\d+)/i);
+        if(match) {
+            let mesRaw = match[3].toLowerCase();
+            const meses = {enero:"Enero",febrero:"Febrero",marzo:"Marzo",abril:"Abril",mayo:"Mayo",junio:"Junio",julio:"Julio",agosto:"Agosto",septiembre:"Septiembre",octubre:"Octubre",noviembre:"Noviembre",diciembre:"Diciembre"};
+            let mes = meses[mesRaw] || mesRaw;
+            return `${mes} ${match[4]}`;
+        }
+        return periodName;
+    }
+    // Generar eventos predeterminados (días 1,3,5,7,9,11,13 Short ; 28 largo)
+    function getDefaultYoutubeEvents(periodName) {
+        const key = periodName;
+        if(youtubeEvents[key]) return youtubeEvents[key];
+        const monthKey = getCurrentMonthKey(periodName);
+        let events = [];
+        for(let d=1; d<=31; d++) {
+            if(d===1 || d===3 || d===5 || d===7 || d===9 || d===11 || d===13) events.push({dia:d, titulo:"Short viral", tipo:"short"});
+            if(d===28) events.push({dia:d, titulo:"Video Largo Tutorial", tipo:"largo"});
+        }
+        youtubeEvents[key] = events;
+        return events;
+    }
+    
+    // actualizar gráfico donut con datos de tabla actual
+    let chartInstance = null;
+    function renderDonutChart(horarioRows) {
+        const ctx = document.getElementById('donutChart')?.getContext('2d');
+        if(!ctx) return;
+        let actividadSum = new Map();
+        horarioRows.forEach(row => {
+            let act = row.actividad;
+            let dur = parseInt(row.duracion) || 0;
+            actividadSum.set(act, (actividadSum.get(act) || 0) + dur);
+        });
+        let total = 24*60;
+        let labels = [], data = [], bgColors = [];
+        for(let [act, mins] of actividadSum.entries()) {
+            let percent = (mins/total)*100;
+            if(percent<0.5) continue;
+            labels.push(act);
+            data.push(mins);
+            if(fixedColors[act]) bgColors.push(fixedColors[act]);
+            else {
+                if(!colorMap[act]) {
+                    let hue = (act.length * 97) % 360;
+                    colorMap[act] = `hsl(${hue}, 65%, 78%)`;
+                }
+                bgColors.push(colorMap[act]);
+            }
+        }
+        if(chartInstance) chartInstance.destroy();
+        chartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: { labels, datasets: [{ data, backgroundColor: bgColors, borderWidth: 0, cutout:'65%' }] },
+            options: { responsive: true, maintainAspectRatio: true, plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${(ctx.raw/240).toFixed(1)}h (${((ctx.raw/1440)*100).toFixed(1)}%)` } } } }
+        });
+    }
+
+    // Renderizar vista completa
+    function renderPeriodView(period) {
+        const horarioRows = horariosData[period];
+        const youtubeEv = getDefaultYoutubeEvents(period);
+        const monthKey = getCurrentMonthKey(period);
+        const mainDiv = document.getElementById('mainContent');
+        mainDiv.innerHTML = `
+            <div class="section-card"><div class="section-title"><i class="fas fa-clock"></i> Horario diario · Edición directa</div>
+                <table class="horario-table" id="horarioEditableTable"><thead><tr><th>Hora</th><th>Actividad</th><th>Duración (min)</th><th>Notas</th><th style="width:50px"></th></tr></thead><tbody id="horarioTbody"></tbody></table>
+                <div class="flex-between mt-3"><button id="addRowBtn" class="btn-icon"><i class="fas fa-plus"></i> Añadir fila</button><button id="alarmGlobalBtn" class="btn-icon"><i class="fas fa-bell"></i> ⏰ Configurar Alarmas</button></div>
+            </div>
+            <div class="section-card"><div class="section-title"><i class="fas fa-chart-pie"></i> Reloj de actividades (24h)</div><div class="donut-container"><canvas id="donutChart" width="250" height="250"></canvas></div></div>
+            <div class="section-card"><div class="section-title"><i class="fab fa-youtube"></i> Calendario de Contenido (${monthKey})</div>
+                <div id="youtubeEventsContainer" class="youtube-grid"></div><button id="addYoutubeEventBtn" class="btn-icon mt-3"><i class="fas fa-plus"></i> Añadir evento personalizado</button>
+            </div>
+            <div class="section-card"><div class="section-title"><i class="fas fa-check-circle"></i> Seguimiento de Hábitos</div>
+                <div id="habitTracker"></div><div id="habitHistory" class="text-small mt-3"></div>
+            </div>
+        `;
+        // llenar tabla
+        const tbody = document.getElementById('horarioTbody');
+        function renderTable() {
+            tbody.innerHTML = '';
+            horarioRows.forEach((row, idx) => {
+                let tr = document.createElement('tr');
+                tr.innerHTML = `<td contenteditable="true" class="editable-cell" data-field="hora" data-idx="${idx}">${row.hora}</td>
+                                <td contenteditable="true" class="editable-cell" data-field="actividad" data-idx="${idx}">${row.actividad}</td>
+                                <td contenteditable="true" class="editable-cell" data-field="duracion" data-idx="${idx}">${row.duracion}</td>
+                                <td contenteditable="true" class="editable-cell" data-field="notas" data-idx="${idx}">${row.notas}</td>
+                                <td><button class="btn-icon deleteRowBtn" data-idx="${idx}"><i class="fas fa-trash-alt"></i></button></td>`;
+                tbody.appendChild(tr);
+            });
+            attachEditableEvents();
+            renderDonutChart(horarioRows);
+        }
+        function attachEditableEvents() {
+            document.querySelectorAll('.editable-cell').forEach(cell => {
+                cell.addEventListener('blur', (e) => {
+                    let idx = parseInt(cell.dataset.idx);
+                    let field = cell.dataset.field;
+                    if(!isNaN(idx) && horarioRows[idx]) {
+                        horarioRows[idx][field] = cell.innerText.trim();
+                        horariosData[period] = horarioRows;
+                        saveAllToLocal();
+                        renderDonutChart(horarioRows);
+                    }
+                });
+            });
+            document.querySelectorAll('.deleteRowBtn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    let idx = parseInt(btn.dataset.idx);
+                    horarioRows.splice(idx,1);
+                    horariosData[period] = horarioRows;
+                    saveAllToLocal();
+                    renderTable();
+                });
+            });
+        }
+        document.getElementById('addRowBtn').addEventListener('click',()=>{
+            horarioRows.push({hora:"12:00", actividad:"Nueva actividad", duracion:30, notas:""});
+            horariosData[period] = horarioRows;
+            saveAllToLocal();
+            renderTable();
+        });
+        renderTable();
+        
+        // youtube events
+        function renderYoutube() {
+            const container = document.getElementById('youtubeEventsContainer');
+            container.innerHTML = '';
+            youtubeEv.forEach((ev, idx) => {
+                const div = document.createElement('div');
+                div.className = 'youtube-event';
+                div.innerHTML = `<span><strong>Día ${ev.dia}</strong> ${ev.tipo==='short'?'📹 Short':'🎬 Video Largo'}</span>
+                                <input type="text" value="${ev.titulo}" data-idx="${idx}" class="ytTitleInput" style="border:none; background:transparent; width:130px;">
+                                <button class="btn-icon deleteYtBtn" data-idx="${idx}"><i class="fas fa-times"></i></button>`;
+                container.appendChild(div);
+            });
+            document.querySelectorAll('.ytTitleInput').forEach(inp => {
+                inp.addEventListener('change', (e) => {
+                    let idx = parseInt(inp.dataset.idx);
+                    youtubeEv[idx].titulo = inp.value;
+                    youtubeEvents[period] = youtubeEv;
+                    saveAllToLocal();
+                });
+            });
+            document.querySelectorAll('.deleteYtBtn').forEach(btn => {
+                btn.addEventListener('click',(e)=>{
+                    let idx = parseInt(btn.dataset.idx);
+                    youtubeEv.splice(idx,1);
+                    youtubeEvents[period] = youtubeEv;
+                    saveAllToLocal();
+                    renderYoutube();
+                });
+            });
+        }
+        renderYoutube();
+        document.getElementById('addYoutubeEventBtn').addEventListener('click',()=>{
+            let newDay = prompt("Día del mes (1-31)");
+            if(newDay && !isNaN(parseInt(newDay))) {
+                youtubeEv.push({dia:parseInt(newDay), titulo:"Nuevo título", tipo:"custom"});
+                youtubeEvents[period] = youtubeEv;
+                saveAllToLocal();
+                renderYoutube();
+            }
+        });
+        
+        // hábitos diarios
+        const todayStr = new Date().toISOString().slice(0,10);
+        if(!habitsData[todayStr]) habitsData[todayStr] = {ejercicio:false, estudiar:false, blender:false, dormir8h:false, sinPantallas:false};
+        const habitosDef = [
+            {id:"ejercicio", label:"Hacer ejercicio (✓ automático si hay Ejercicio en tabla actual)"},
+            {id:"estudiar", label:"Estudiar cocina"},{id:"blender", label:"Trabajar en Blender"},{id:"dormir8h", label:"Dormir al menos 8 horas"},
+            {id:"sinPantallas", label:"Sin pantallas 30 min antes de dormir"}
+        ];
+        const hasExerciseToday = horarioRows.some(r=> r.actividad.toLowerCase().includes("ejercicio"));
+        const habitDiv = document.getElementById('habitTracker');
+        habitDiv.innerHTML = '';
+        habitosDef.forEach(h=>{
+            let checked = habitsData[todayStr][h.id];
+            if(h.id==="ejercicio" && hasExerciseToday && !checked) { habitsData[todayStr].ejercicio=true; checked=true; saveAllToLocal();}
+            const div = document.createElement('div'); div.className='habit-check-item';
+            div.innerHTML = `<input type="checkbox" ${checked?'checked':''} data-id="${h.id}" id="chk_${h.id}"> <label>${h.label}</label>`;
+            habitDiv.appendChild(div);
+        });
+        document.querySelectorAll('#habitTracker input').forEach(chk=>{
+            chk.addEventListener('change',(e)=>{
+                habitsData[todayStr][e.target.dataset.id] = e.target.checked;
+                saveAllToLocal();
+                renderHistory();
+            });
+        });
+        function renderHistory() {
+            const histDiv = document.getElementById('habitHistory');
+            let last7 = [];
+            for(let i=0;i<7;i++){ let d = new Date(); d.setDate(d.getDate()-i); last7.push(d.toISOString().slice(0,10));}
+            histDiv.innerHTML = '<strong>Últimos 7 días:</strong> '+last7.map(d=>`${d}: ${habitsData[d] ? Object.values(habitsData[d]).filter(v=>v===true).length : 0}/5`).join(' · ');
+        }
+        renderHistory();
+        document.getElementById('alarmGlobalBtn').addEventListener('click',()=>openAlarmModal());
+    }
+    
+    // alarmas modal + notificaciones
+    let alarmInterval;
+    function openAlarmModal() {
+        const modal = document.getElementById('alarmModal');
+        modal.style.display = 'flex';
+        renderAlarmsList();
+    }
+    function renderAlarmsList() {
+        const container = document.getElementById('alarmsList');
+        container.innerHTML = alarms.map((a,idx)=>`<div class="flex-between"><span>${a.hora} ${a.mensaje} ${a.dias?`[días:${a.dias}]`:''}</span><button class="btn-icon" data-delalarm="${idx}">🗑️</button></div>`).join('');
+        document.querySelectorAll('[data-delalarm]').forEach(btn=>{
+            btn.addEventListener('click',(e)=>{
+                let idx = parseInt(btn.dataset.delalarm);
+                alarms.splice(idx,1);
+                saveAllToLocal();
+                renderAlarmsList();
+            });
+        });
+    }
+    function addAlarm(hora,mensaje,diasStr){
+        let diasArr = diasStr ? diasStr.split(',').map(Number).filter(n=>!isNaN(n) && n>=0 && n<7) : [];
+        alarms.push({hora, mensaje, dias:diasArr});
+        saveAllToLocal();
+        renderAlarmsList();
+    }
+    function initNotificationAndAudio() {
+        if(Notification.permission !== 'granted') Notification.requestPermission();
+        alarmInterval = setInterval(() => {
+            const now = new Date();
+            const currentHour = now.getHours().toString().padStart(2,'0')+":"+now.getMinutes().toString().padStart(2,'0');
+            const weekday = now.getDay(); // dom=0 -> 0 es domingo en js pero trabajamos lunes=0? adaptamos: mapeo lunes=0...
+            alarms.forEach(alarm=>{
+                if(alarm.hora === currentHour){
+                    if(alarm.dias.length===0 || alarm.dias.includes(weekday===0?6:weekday-1)){
+                        if(Notification.permission === 'granted') new Notification("RitmoLab", {body: alarm.mensaje});
+                        // beep simple
+                        try{
+                            let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                            let osc = audioCtx.createOscillator();
+                            let gain = audioCtx.createGain();
+                            osc.connect(gain); gain.connect(audioCtx.destination);
+                            osc.frequency.value = 880; gain.gain.value = 0.2;
+                            osc.start(); gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime+0.6);
+                            osc.stop(audioCtx.currentTime+0.6);
+                            audioCtx.resume();
+                        }catch(e){}
+                    }
+                }
+            });
+        }, 60000);
+    }
+    
+    // sidebar periodos
+    function buildSidebar() {
+        const container = document.getElementById('periodList');
+        container.innerHTML = '';
+        PERIODOS.forEach(p=>{
+            const div = document.createElement('div');
+            div.className = `period-item ${p===currentPeriod ? 'active':''}`;
+            div.innerText = p;
+            div.addEventListener('click',()=>{
+                currentPeriod = p;
+                buildSidebar();
+                renderPeriodView(p);
+            });
+            container.appendChild(div);
+        });
+    }
+    
+    // backup export/import
+    document.getElementById('exportBackupBtn').addEventListener('click',()=>{
+        const backup = {horariosData, youtubeEvents, alarms, habitsData, version:1};
+        const dataStr = JSON.stringify(backup,null,2);
+        const blob = new Blob([dataStr],{type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href=url; a.download='ritmolab_backup.json'; a.click(); URL.revokeObjectURL(url);
+    });
+    document.getElementById('importBackupBtn').addEventListener('click',()=>{
+        document.getElementById('importFile').click();
+    });
+    document.getElementById('importFile').addEventListener('change',(e)=>{
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev)=>{
+            try{
+                const data = JSON.parse(ev.target.result);
+                if(data.horariosData) horariosData = data.horariosData;
+                if(data.youtubeEvents) youtubeEvents = data.youtubeEvents;
+                if(data.alarms) alarms = data.alarms;
+                if(data.habitsData) habitsData = data.habitsData;
+                saveAllToLocal();
+                buildSidebar();
+                if(currentPeriod) renderPeriodView(currentPeriod);
+                alert("Copia de seguridad importada");
+            }catch(e){ alert("Archivo inválido");}
+        };
+        reader.readAsText(file);
+    });
+    
+    (function init(){
+        loadFromLocalStorage();
+        buildSidebar();
+        renderPeriodView(currentPeriod);
+        initNotificationAndAudio();
+        document.getElementById('closeModalBtn').addEventListener('click',()=>document.getElementById('alarmModal').style.display='none');
+        document.getElementById('addAlarmBtn').addEventListener('click',()=>{
+            let hora = document.getElementById('alarmTime').value;
+            let msg = document.getElementById('alarmMsg').value;
+            let dias = document.getElementById('alarmDays').value;
+            if(hora && msg) addAlarm(hora, msg, dias);
+            document.getElementById('alarmTime').value=''; document.getElementById('alarmMsg').value='';
+        });
+    })();
+</script>
+</body>
+</html>
