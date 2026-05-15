@@ -16,59 +16,8 @@
             color: #2D2A24;
             padding: 28px 24px;
             min-height: 100vh;
-            overflow-x: hidden;
         }
-        .particle {
-            position: fixed;
-            background: rgba(216, 184, 148, 0.3);
-            border-radius: 50%;
-            pointer-events: none;
-            animation: floatParticle linear infinite;
-            z-index: 0;
-        }
-        @keyframes floatParticle {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.5; }
-            90% { opacity: 0.3; }
-            100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
-        }
-        @keyframes achievementPop {
-            0% { transform: scale(0) rotate(-10deg); opacity: 0; }
-            50% { transform: scale(1.1) rotate(2deg); }
-            100% { transform: scale(1) rotate(0deg); opacity: 1; }
-        }
-        @keyframes confettiFall {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-        }
-        .achievement-toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: linear-gradient(135deg, #2D2A24, #3D3730);
-            color: #F2E8DC;
-            padding: 16px 24px;
-            border-radius: 60px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            z-index: 1000;
-            animation: achievementPop 0.5s ease-out;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            border: 1px solid #D4BFA8;
-            font-family: 'Caveat', cursive;
-            font-size: 1.1rem;
-        }
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            position: absolute;
-            animation: confettiFall 2s ease-out forwards;
-            pointer-events: none;
-            z-index: 999;
-        }
-        .app-container { max-width: 1600px; margin: 0 auto; position: relative; z-index: 1; }
+        .app-container { max-width: 1600px; margin: 0 auto; }
         .hero-header {
             text-align: center;
             margin-bottom: 36px;
@@ -175,7 +124,7 @@
         .habit-time { font-size: 0.75rem; color: #B8A48A; }
         .horario-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         .horario-table th, .horario-table td { padding: 12px; border-bottom: 1px solid #F0E7DE; text-align: left; }
-        .donut-wrapper { max-width: 260px; margin: 0 auto; }
+        .donut-wrapper { max-width: 260px; margin: 20px auto 0; }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 16px; }
         .calendar-day {
             background: #FCF8F2;
@@ -185,8 +134,6 @@
             font-size: 0.8rem;
             transition: all 0.2s;
             border: 1px solid #EFE5DB;
-            cursor: pointer;
-            position: relative;
         }
         .calendar-day:hover { background: #F5EDE3; transform: scale(1.02); }
         .calendar-day.has-idea { background: #EBDDCB; border-color: #D4BFA8; }
@@ -211,18 +158,21 @@
         }
         .btn-cozy:hover { background: #E8DACA; transform: scale(0.97); }
         .history-list { max-height: 200px; overflow-y: auto; margin-top: 16px; }
-        .history-item { padding: 10px; border-bottom: 1px solid #EFE5DB; font-size: 0.8rem; display: flex; justify-content: space-between; }
+        .history-item { padding: 10px; border-bottom: 1px solid #EFE5DB; font-size: 0.75rem; display: flex; justify-content: space-between; gap: 10px; }
         .notification-badge {
             background: #FFF3E8;
             border-radius: 60px;
             padding: 8px 16px;
-            display: inline-flex;
+            display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             font-size: 0.75rem;
+            margin-top: 20px;
         }
         footer { text-align: center; margin-top: 48px; color: #CCBFAD; font-family: 'Caveat', cursive; padding: 20px; }
         @media (max-width: 900px) { .period-list { flex-direction: row; flex-wrap: wrap; } .main-content { padding: 20px; } }
+        .loading { text-align: center; padding: 80px 20px; color: #B8A48A; }
     </style>
 </head>
 <body>
@@ -236,371 +186,355 @@
         <div class="period-sidebar">
             <h2><i class="fas fa-calendar-alt"></i> Meses · Logros</h2>
             <div class="period-list" id="periodList"></div>
-            <div class="notification-badge" style="margin-top: 20px; width:100%; justify-content:center;"><i class="fas fa-bell"></i> Notificaciones activas · sonido fuerte</div>
+            <div class="notification-badge"><i class="fas fa-bell"></i> Notificaciones activas · sonido fuerte</div>
             <div id="historyList" class="history-list"></div>
         </div>
-        <div class="main-content" id="mainContent"><div style="text-align:center;padding:80px"><i class="fas fa-spinner fa-pulse"></i> Cargando...</div></div>
+        <div class="main-content" id="mainContent">
+            <div class="loading"><i class="fas fa-spinner fa-pulse"></i> Cargando...</div>
+        </div>
     </div>
     <footer>🏆 Cada hábito completado genera notificación · Los meses se desbloquean con el tiempo real</footer>
 </div>
 
 <script>
-    // ==================== CONFIGURACIÓN ====================
-    const START_DATE = new Date(2026, 4, 15); // 15 mayo 2026
-    const MESES = [
-        { nombre: "Mayo 2026 (15-31)", fechaInicio: new Date(2026, 4, 15), fechaFin: new Date(2026, 4, 31), unlocked: false, ideas: {} },
-        { nombre: "Junio 2026", fechaInicio: new Date(2026, 5, 1), fechaFin: new Date(2026, 5, 30), unlocked: false, ideas: {} },
-        { nombre: "Julio 2026", fechaInicio: new Date(2026, 6, 1), fechaFin: new Date(2026, 6, 31), unlocked: false, ideas: {} },
-        { nombre: "Agosto 2026", fechaInicio: new Date(2026, 7, 1), fechaFin: new Date(2026, 7, 31), unlocked: false, ideas: {} },
-        { nombre: "Septiembre 2026", fechaInicio: new Date(2026, 8, 1), fechaFin: new Date(2026, 8, 30), unlocked: false, ideas: {} },
-        { nombre: "Octubre 2026", fechaInicio: new Date(2026, 9, 1), fechaFin: new Date(2026, 9, 31), unlocked: false, ideas: {} },
-        { nombre: "Noviembre 2026", fechaInicio: new Date(2026, 10, 1), fechaFin: new Date(2026, 10, 30), unlocked: false, ideas: {} },
-        { nombre: "Diciembre 2026", fechaInicio: new Date(2026, 11, 1), fechaFin: new Date(2026, 11, 31), unlocked: false, ideas: {} },
-        { nombre: "Enero 2027", fechaInicio: new Date(2027, 0, 1), fechaFin: new Date(2027, 0, 31), unlocked: false, ideas: {} },
-        { nombre: "Febrero 2027", fechaInicio: new Date(2027, 1, 1), fechaFin: new Date(2027, 1, 28), unlocked: false, ideas: {} },
-        { nombre: "Marzo 2027", fechaInicio: new Date(2027, 2, 1), fechaFin: new Date(2027, 2, 31), unlocked: false, ideas: {} },
-        { nombre: "Abril 2027", fechaInicio: new Date(2027, 3, 1), fechaFin: new Date(2027, 3, 30), unlocked: false, ideas: {} }
-    ];
-    
-    // Hábitos diarios con horarios específicos (comer 1 hora)
-    const HABITOS = [
-        { id: "levantarse", nombre: "🌅 Levantarse a tiempo", hora: "08:00", completado: false, notificado: false },
-        { id: "desayuno", nombre: "🍳 Desayuno saludable", hora: "08:30", completado: false, notificado: false },
-        { id: "estudio", nombre: "📚 Estudio de cocina", hora: "09:00", completado: false, notificado: false },
-        { id: "blender", nombre: "🎨 Práctica en Blender", hora: "11:00", completado: false, notificado: false },
-        { id: "almuerzo", nombre: "🍽️ Almuerzo (1 hora)", hora: "13:00", completado: false, notificado: false, duracion: 60 },
-        { id: "ejercicio", nombre: "💪 Ejercicio diario", hora: "17:00", completado: false, notificado: false },
-        { id: "once", nombre: "☕ Once / Merienda", hora: "18:00", completado: false, notificado: false },
-        { id: "sin_pantallas", nombre: "📵 Sin pantallas 30min antes", hora: "21:30", completado: false, notificado: false },
-        { id: "dormir", nombre: "😴 Dormir a tiempo", hora: "22:00", completado: false, notificado: false }
-    ];
-    
-    // Horarios estándar para tabla
-    const HORARIO_ESTANDAR = [
-        { hora: "08:00", actividad: "Levantarse + Higiene", duracion: 30, notas: "" },
-        { hora: "08:30", actividad: "Desayuno", duracion: 30, notas: "" },
-        { hora: "09:00", actividad: "Estudio de cocina", duracion: 90, notas: "" },
-        { hora: "10:30", actividad: "Tiempo libre", duracion: 30, notas: "" },
-        { hora: "11:00", actividad: "Blender", duracion: 90, notas: "" },
-        { hora: "12:30", actividad: "Tiempo libre", duracion: 30, notas: "" },
-        { hora: "13:00", actividad: "Almuerzo (1 hora)", duracion: 60, notas: "Comer tranquilo" },
-        { hora: "14:00", actividad: "Tiempo libre", duracion: 60, notas: "" },
-        { hora: "15:00", actividad: "Blender / Edición", duracion: 90, notas: "" },
-        { hora: "16:30", actividad: "Tiempo libre", duracion: 30, notas: "" },
-        { hora: "17:00", actividad: "Ejercicio", duracion: 30, notas: "" },
-        { hora: "17:30", actividad: "Ducha", duracion: 30, notas: "" },
-        { hora: "18:00", actividad: "Once", duracion: 30, notas: "" },
-        { hora: "18:30", actividad: "Tiempo libre", duracion: 90, notas: "" },
-        { hora: "20:00", actividad: "Sin pantallas", duracion: 90, notas: "" },
-        { hora: "21:30", actividad: "Preparar dormir", duracion: 30, notas: "" },
-        { hora: "22:00", actividad: "Dormir", duracion: 600, notas: "" }
-    ];
-    
-    // Variables globales
-    let currentMonthIndex = 0;
-    let chartInstance = null;
-    let audioCtx = null;
-    let habitosData = JSON.parse(localStorage.getItem("RitmoLab_habitos")) || HABITOS.map(h => ({ ...h, completado: false, notificado: false }));
-    let mesesData = JSON.parse(localStorage.getItem("RitmoLab_meses")) || MESES;
-    let historyEntries = JSON.parse(localStorage.getItem("RitmoLab_history")) || [];
-    let lastCheckDate = localStorage.getItem("RitmoLab_lastDate") || null;
-    
-    function saveAll() {
-        localStorage.setItem("RitmoLab_habitos", JSON.stringify(habitosData));
-        localStorage.setItem("RitmoLab_meses", JSON.stringify(mesesData));
-        localStorage.setItem("RitmoLab_history", JSON.stringify(historyEntries));
-    }
-    
-    // Formato fecha chilena
-    function formatFechaChilena(date) {
-        return `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}/${date.getFullYear()}`;
-    }
-    
-    // Sonido fuerte
-    function playLoudBeep() {
-        try {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.type = 'square';
-            osc.frequency.value = 880;
-            gain.gain.value = 0.4;
-            osc.start();
-            gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.6);
-            osc.stop(audioCtx.currentTime + 0.6);
-            audioCtx.resume();
-        } catch(e) { console.warn("Audio no disponible"); }
-    }
-    
-    function sendNotification(title, body) {
-        playLoudBeep();
-        if (Notification.permission === 'granted') {
-            new Notification(title, { body, icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='85' font-size='85' text-anchor='middle' fill='%23E8C9A3'%3E🏆%3C/text%3E%3C/svg%3E" });
-        } else if (Notification.permission !== 'denied') {
-            Notification.requestPermission();
+    (function() {
+        // ==================== CONFIGURACIÓN ====================
+        const START_DATE = new Date(2026, 4, 15);
+        
+        const MESES = [
+            { nombre: "Mayo 2026 (15-31)", fechaInicio: new Date(2026, 4, 15), fechaFin: new Date(2026, 4, 31), unlocked: false, ideas: {} },
+            { nombre: "Junio 2026", fechaInicio: new Date(2026, 5, 1), fechaFin: new Date(2026, 5, 30), unlocked: false, ideas: {} },
+            { nombre: "Julio 2026", fechaInicio: new Date(2026, 6, 1), fechaFin: new Date(2026, 6, 31), unlocked: false, ideas: {} },
+            { nombre: "Agosto 2026", fechaInicio: new Date(2026, 7, 1), fechaFin: new Date(2026, 7, 31), unlocked: false, ideas: {} },
+            { nombre: "Septiembre 2026", fechaInicio: new Date(2026, 8, 1), fechaFin: new Date(2026, 8, 30), unlocked: false, ideas: {} },
+            { nombre: "Octubre 2026", fechaInicio: new Date(2026, 9, 1), fechaFin: new Date(2026, 9, 31), unlocked: false, ideas: {} },
+            { nombre: "Noviembre 2026", fechaInicio: new Date(2026, 10, 1), fechaFin: new Date(2026, 10, 30), unlocked: false, ideas: {} },
+            { nombre: "Diciembre 2026", fechaInicio: new Date(2026, 11, 1), fechaFin: new Date(2026, 11, 31), unlocked: false, ideas: {} },
+            { nombre: "Enero 2027", fechaInicio: new Date(2027, 0, 1), fechaFin: new Date(2027, 0, 31), unlocked: false, ideas: {} },
+            { nombre: "Febrero 2027", fechaInicio: new Date(2027, 1, 1), fechaFin: new Date(2027, 1, 28), unlocked: false, ideas: {} },
+            { nombre: "Marzo 2027", fechaInicio: new Date(2027, 2, 1), fechaFin: new Date(2027, 2, 31), unlocked: false, ideas: {} },
+            { nombre: "Abril 2027", fechaInicio: new Date(2027, 3, 1), fechaFin: new Date(2027, 3, 30), unlocked: false, ideas: {} }
+        ];
+        
+        const HABITOS = [
+            { id: "levantarse", nombre: "🌅 Levantarse a tiempo", hora: "08:00", completado: false, notificado: false },
+            { id: "desayuno", nombre: "🍳 Desayuno saludable", hora: "08:30", completado: false, notificado: false },
+            { id: "estudio", nombre: "📚 Estudio de cocina", hora: "09:00", completado: false, notificado: false },
+            { id: "blender", nombre: "🎨 Práctica en Blender", hora: "11:00", completado: false, notificado: false },
+            { id: "almuerzo", nombre: "🍽️ Almuerzo (1 hora)", hora: "13:00", completado: false, notificado: false },
+            { id: "ejercicio", nombre: "💪 Ejercicio diario", hora: "17:00", completado: false, notificado: false },
+            { id: "once", nombre: "☕ Once / Merienda", hora: "18:00", completado: false, notificado: false },
+            { id: "sin_pantallas", nombre: "📵 Sin pantallas 30min antes", hora: "21:30", completado: false, notificado: false },
+            { id: "dormir", nombre: "😴 Dormir a tiempo", hora: "22:00", completado: false, notificado: false }
+        ];
+        
+        const HORARIO_ESTANDAR = [
+            { hora: "08:00", actividad: "Levantarse + Higiene", duracion: 30 },
+            { hora: "08:30", actividad: "Desayuno", duracion: 30 },
+            { hora: "09:00", actividad: "Estudio de cocina", duracion: 90 },
+            { hora: "10:30", actividad: "Tiempo libre", duracion: 30 },
+            { hora: "11:00", actividad: "Blender", duracion: 90 },
+            { hora: "12:30", actividad: "Tiempo libre", duracion: 30 },
+            { hora: "13:00", actividad: "Almuerzo (1 hora)", duracion: 60 },
+            { hora: "14:00", actividad: "Tiempo libre", duracion: 60 },
+            { hora: "15:00", actividad: "Blender / Edición", duracion: 90 },
+            { hora: "16:30", actividad: "Tiempo libre", duracion: 30 },
+            { hora: "17:00", actividad: "Ejercicio", duracion: 30 },
+            { hora: "17:30", actividad: "Ducha", duracion: 30 },
+            { hora: "18:00", actividad: "Once", duracion: 30 },
+            { hora: "18:30", actividad: "Tiempo libre", duracion: 90 },
+            { hora: "20:00", actividad: "Sin pantallas", duracion: 90 },
+            { hora: "21:30", actividad: "Preparar dormir", duracion: 30 },
+            { hora: "22:00", actividad: "Dormir", duracion: 600 }
+        ];
+        
+        // Cargar datos guardados
+        let habitosData = JSON.parse(localStorage.getItem("RitmoLab_habitos")) || HABITOS.map(h => ({ ...h }));
+        let mesesData = JSON.parse(localStorage.getItem("RitmoLab_meses")) || MESES;
+        let historyEntries = JSON.parse(localStorage.getItem("RitmoLab_history")) || [];
+        let lastCheckDate = localStorage.getItem("RitmoLab_lastDate") || null;
+        let currentMonthIndex = 0;
+        let chartInstance = null;
+        let audioCtx = null;
+        
+        function saveAll() {
+            localStorage.setItem("RitmoLab_habitos", JSON.stringify(habitosData));
+            localStorage.setItem("RitmoLab_meses", JSON.stringify(mesesData));
+            localStorage.setItem("RitmoLab_history", JSON.stringify(historyEntries));
         }
-    }
-    
-    // Animación de confeti
-    function showConfetti() {
-        for (let i = 0; i < 50; i++) {
-            const conf = document.createElement('div');
-            conf.className = 'confetti';
-            conf.style.left = Math.random() * window.innerWidth + 'px';
-            conf.style.top = '-20px';
-            conf.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
-            conf.style.width = Math.random() * 10 + 5 + 'px';
-            conf.style.height = conf.style.width;
-            document.body.appendChild(conf);
-            setTimeout(() => conf.remove(), 2000);
+        
+        function formatFechaChilena(date) {
+            return `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}/${date.getFullYear()}`;
         }
-    }
-    
-    function showAchievement(message) {
-        const toast = document.createElement('div');
-        toast.className = 'achievement-toast';
-        toast.innerHTML = `<i class="fas fa-trophy" style="font-size:1.5rem;"></i> ${message}`;
-        document.body.appendChild(toast);
-        showConfetti();
-        setTimeout(() => toast.remove(), 4000);
-    }
-    
-    // Verificar desbloqueo de meses basado en tiempo real
-    function checkMonthUnlocks() {
-        const now = new Date();
-        let anyUnlocked = false;
-        mesesData.forEach((mes, idx) => {
-            if (!mes.unlocked && now >= mes.fechaInicio) {
-                mes.unlocked = true;
-                anyUnlocked = true;
-                const fechaChilena = formatFechaChilena(mes.fechaInicio);
-                historyEntries.unshift({ fecha: new Date().toISOString(), tipo: "mes", mensaje: `🎉 Mes "${mes.nombre}" desbloqueado el ${fechaChilena}` });
-                showAchievement(`✨ ¡Mes ${mes.nombre} desbloqueado! ✨`);
-                sendNotification("🏆 Nuevo Logro Desbloqueado", `Has desbloqueado ${mes.nombre}. ¡Sigue así!`);
-            }
-        });
-        if (anyUnlocked) {
-            saveAll();
-            buildSidebar();
-            if (mesesData[currentMonthIndex]?.unlocked) renderPeriodView(currentMonthIndex);
-            else {
-                const firstUnlocked = mesesData.findIndex(m => m.unlocked);
-                if (firstUnlocked !== -1) { currentMonthIndex = firstUnlocked; renderPeriodView(currentMonthIndex); buildSidebar(); }
+        
+        function playLoudBeep() {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'square';
+                osc.frequency.value = 880;
+                gain.gain.value = 0.3;
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.5);
+                osc.stop(audioCtx.currentTime + 0.5);
+                audioCtx.resume();
+            } catch(e) { console.warn("Audio no disponible"); }
+        }
+        
+        function sendNotification(title, body) {
+            playLoudBeep();
+            if (Notification.permission === 'granted') {
+                new Notification(title, { body });
+            } else if (Notification.permission !== 'denied') {
+                Notification.requestPermission();
             }
         }
-    }
-    
-    // Verificar hábitos cada minuto (notificaciones)
-    function checkHabitReminders() {
-        const now = new Date();
-        const currentTime = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
-        habitosData.forEach(habito => {
-            if (!habito.notificado && habito.hora === currentTime && !habito.completado) {
-                habito.notificado = true;
-                sendNotification(`⏰ Recordatorio: ${habito.nombre}`, `Es hora de ${habito.nombre.toLowerCase()}. ¡Mantén el ritmo!`);
-                playLoudBeep();
+        
+        function showAchievement(message) {
+            const toast = document.createElement('div');
+            toast.className = 'achievement-toast';
+            toast.innerHTML = `<i class="fas fa-trophy" style="font-size:1.5rem;"></i> ${message}`;
+            document.body.appendChild(toast);
+            for (let i = 0; i < 30; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.left = Math.random() * window.innerWidth + 'px';
+                conf.style.top = '-20px';
+                conf.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                conf.style.width = Math.random() * 10 + 5 + 'px';
+                conf.style.height = conf.style.width;
+                document.body.appendChild(conf);
+                setTimeout(() => conf.remove(), 2000);
             }
-            // Reset notificación al día siguiente (se resetea a medianoche)
-        });
-        saveAll();
-    }
-    
-    // Reset diario de hábitos (a medianoche)
-    function resetDailyHabits() {
-        const today = new Date().toDateString();
-        if (lastCheckDate !== today) {
-            habitosData.forEach(h => { h.completado = false; h.notificado = false; });
-            lastCheckDate = today;
-            localStorage.setItem("RitmoLab_lastDate", today);
-            saveAll();
-            if (mesesData[currentMonthIndex]?.unlocked) renderPeriodView(currentMonthIndex);
+            setTimeout(() => toast.remove(), 4000);
         }
-    }
-    
-    // Marcar hábito como completado
-    function toggleHabit(habitId, checked) {
-        const habito = habitosData.find(h => h.id === habitId);
-        if (habito) {
-            habito.completado = checked;
-            if (checked) {
-                sendNotification(`✅ Hábito completado: ${habito.nombre}`, `¡Buen trabajo! Has completado ${habito.nombre}.`);
-                playLoudBeep();
-                // Registrar en historial (1 día, 1 semana, 1 mes)
-                const now = new Date();
-                const fechaStr = formatFechaChilena(now);
-                historyEntries.unshift({ fecha: now.toISOString(), tipo: "habito", mensaje: `✅ Completaste "${habito.nombre}" el ${fechaStr} a las ${habito.hora}` });
-                if (historyEntries.length > 50) historyEntries.pop();
+        
+        function checkMonthUnlocks() {
+            const now = new Date();
+            let anyUnlocked = false;
+            mesesData.forEach((mes, idx) => {
+                if (!mes.unlocked && now >= mes.fechaInicio) {
+                    mes.unlocked = true;
+                    anyUnlocked = true;
+                    const fechaChilena = formatFechaChilena(mes.fechaInicio);
+                    historyEntries.unshift({ fecha: new Date().toISOString(), mensaje: `🎉 Mes "${mes.nombre}" desbloqueado el ${fechaChilena}` });
+                    showAchievement(`✨ ¡Mes ${mes.nombre} desbloqueado! ✨`);
+                    sendNotification("🏆 Nuevo Logro", `Has desbloqueado ${mes.nombre}`);
+                }
+            });
+            if (anyUnlocked) {
                 saveAll();
-                renderHistoryList();
+                buildSidebar();
+                if (mesesData[currentMonthIndex]?.unlocked) renderPeriodView(currentMonthIndex);
+                else {
+                    const firstUnlocked = mesesData.findIndex(m => m.unlocked);
+                    if (firstUnlocked !== -1) { currentMonthIndex = firstUnlocked; renderPeriodView(currentMonthIndex); buildSidebar(); }
+                }
             }
-            saveAll();
-            renderHabitsList();
         }
-    }
-    
-    // Renderizar lista de hábitos
-    function renderHabitsList() {
-        const container = document.getElementById('habitsContainer');
-        if (!container) return;
-        const now = new Date();
-        const currentTime = now.getHours() * 60 + now.getMinutes();
-        container.innerHTML = habitosData.map(h => {
-            const [hour, minute] = h.hora.split(':').map(Number);
-            const habitTimeMinutes = hour * 60 + minute;
-            const isPast = habitTimeMinutes < currentTime;
-            return `
+        
+        function checkHabitReminders() {
+            const now = new Date();
+            const currentTime = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
+            habitosData.forEach(habito => {
+                if (!habito.notificado && habito.hora === currentTime && !habito.completado) {
+                    habito.notificado = true;
+                    sendNotification(`⏰ Recordatorio`, `Es hora de ${habito.nombre}`);
+                }
+            });
+            saveAll();
+        }
+        
+        function resetDailyHabits() {
+            const today = new Date().toDateString();
+            if (lastCheckDate !== today) {
+                habitosData.forEach(h => { h.completado = false; h.notificado = false; });
+                lastCheckDate = today;
+                localStorage.setItem("RitmoLab_lastDate", today);
+                saveAll();
+                if (mesesData[currentMonthIndex]?.unlocked) renderPeriodView(currentMonthIndex);
+            }
+        }
+        
+        function toggleHabit(habitId, checked) {
+            const habito = habitosData.find(h => h.id === habitId);
+            if (habito) {
+                habito.completado = checked;
+                if (checked) {
+                    sendNotification(`✅ Hábito completado`, `${habito.nombre} completado`);
+                    const now = new Date();
+                    historyEntries.unshift({ fecha: now.toISOString(), mensaje: `✅ Completaste "${habito.nombre}" el ${formatFechaChilena(now)}` });
+                    if (historyEntries.length > 30) historyEntries.pop();
+                    saveAll();
+                    renderHistoryList();
+                }
+                saveAll();
+                renderHabitsList();
+                renderDonut();
+            }
+        }
+        
+        function renderHabitsList() {
+            const container = document.getElementById('habitsContainer');
+            if (!container) return;
+            container.innerHTML = habitosData.map(h => `
                 <div class="habit-item">
-                    <input type="checkbox" class="habit-check" data-id="${h.id}" ${h.completado ? 'checked' : ''} ${isPast && !h.completado ? 'style="accent-color:#E2A468;"' : ''}>
+                    <input type="checkbox" class="habit-check" data-id="${h.id}" ${h.completado ? 'checked' : ''}>
                     <span class="habit-label">${h.nombre}</span>
-                    <span class="habit-time">${h.hora} ${h.duracion ? `(${h.duracion} min)` : ''}</span>
+                    <span class="habit-time">${h.hora}</span>
+                </div>
+            `).join('');
+            document.querySelectorAll('.habit-check').forEach(cb => {
+                cb.addEventListener('change', (e) => toggleHabit(cb.dataset.id, cb.checked));
+            });
+        }
+        
+        function renderCalendar(monthIndex) {
+            const container = document.getElementById('monthlyCalendar');
+            if (!container) return;
+            const mes = mesesData[monthIndex];
+            if (!mes || !mes.unlocked) {
+                container.innerHTML = '<div style="text-align:center;padding:20px;">🔒 Completa el mes anterior para desbloquear este calendario</div>';
+                return;
+            }
+            const year = mes.fechaInicio.getFullYear();
+            const month = mes.fechaInicio.getMonth();
+            const firstDay = new Date(year, month, mes.fechaInicio.getDate());
+            const startDay = firstDay.getDay();
+            const daysInMonth = mes.fechaFin.getDate();
+            const today = new Date();
+            const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+            
+            let html = `<div style="text-align:center; margin-bottom:12px;"><strong>${mes.nombre}</strong></div><div class="calendar-grid">`;
+            const diasSemana = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'];
+            diasSemana.forEach(d => html += `<div style="text-align:center;font-weight:bold;">${d}</div>`);
+            for (let i = 0; i < startDay; i++) html += `<div></div>`;
+            for (let d = mes.fechaInicio.getDate(); d <= daysInMonth; d++) {
+                const isToday = isCurrentMonth && today.getDate() === d;
+                const idea = mes.ideas[d] || '';
+                html += `<div class="calendar-day ${idea ? 'has-idea' : ''} ${isToday ? 'today' : ''}">
+                            <strong>${d}</strong>
+                            ${idea ? `<span class="idea-badge"><i class="fas fa-lightbulb"></i> ${idea.substring(0, 15)}${idea.length>15?'...':''}</span>` : ''}
+                            <input type="text" class="idea-input" placeholder="Añadir idea..." value="${escapeHtml(idea)}" data-day="${d}">
+                        </div>`;
+            }
+            html += `</div><button class="btn-cozy" id="saveIdeasBtn"><i class="fas fa-save"></i> Guardar ideas del mes</button>`;
+            container.innerHTML = html;
+            
+            document.querySelectorAll('.idea-input').forEach(inp => {
+                inp.addEventListener('change', (e) => {
+                    const day = parseInt(inp.dataset.day);
+                    mes.ideas[day] = inp.value;
+                    saveAll();
+                });
+            });
+            document.getElementById('saveIdeasBtn')?.addEventListener('click', () => {
+                saveAll();
+                showAchievement(`📝 Ideas de ${mes.nombre} guardadas`);
+            });
+        }
+        
+        function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+        
+        function renderDonut() {
+            const canvas = document.getElementById('donutChart');
+            if (!canvas) return;
+            const completados = habitosData.filter(h => h.completado).length;
+            const total = habitosData.length;
+            const pending = total - completados;
+            if (chartInstance) chartInstance.destroy();
+            const ctx = canvas.getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels: ['Hábitos Completados', 'Pendientes'], datasets: [{ data: [completados, pending], backgroundColor: ['#D4BFA8', '#EFE5DB'], cutout: '65%', borderWidth: 0 }] },
+                options: { plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw} de ${total}` } } }, responsive: true }
+            });
+        }
+        
+        function renderPeriodView(monthIndex) {
+            const mes = mesesData[monthIndex];
+            if (!mes) return;
+            const mainDiv = document.getElementById('mainContent');
+            mainDiv.innerHTML = `
+                <div class="info-card"><div class="card-header"><i class="fas fa-info-circle"></i> Resumen · ${mes.nombre}</div>
+                    <div class="info-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                        <div class="info-badge" style="background:#FEFCF9; border-radius:24px; padding:16px;"><strong>📅 Período</strong><span style="display:block; margin-top:8px;">${formatFechaChilena(mes.fechaInicio)} - ${formatFechaChilena(mes.fechaFin)}</span></div>
+                        <div class="info-badge" style="background:#FEFCF9; border-radius:24px; padding:16px;"><strong>🏆 Estado</strong><span style="display:block; margin-top:8px;">${mes.unlocked ? '✅ Desbloqueado' : '🔒 Bloqueado'}</span></div>
+                    </div>
+                </div>
+                <div class="info-card"><div class="card-header"><i class="fas fa-list-check"></i> Hábitos Diarios · Recordatorios</div>
+                    <div id="habitsContainer"></div>
+                    <div class="donut-wrapper"><canvas id="donutChart" width="200" height="200"></canvas></div>
+                </div>
+                <div class="info-card"><div class="card-header"><i class="fas fa-table-list"></i> Horario del Día</div>
+                    <div style="overflow-x:auto;"><table class="horario-table"><thead><tr><th>Hora</th><th>Actividad</th><th>Duración</th></tr></thead><tbody>
+                    ${HORARIO_ESTANDAR.map(row => `<tr><td>${row.hora}</td><td>${row.actividad}</td><td>${row.duracion} min</td></tr>`).join('')}</tbody></table></div>
+                </div>
+                <div class="calendar-card"><div class="card-header"><i class="fas fa-calendar-alt"></i> Calendario Mensual · Ideas</div>
+                    <div id="monthlyCalendar"></div>
                 </div>
             `;
-        }).join('');
-        document.querySelectorAll('.habit-check').forEach(cb => {
-            cb.addEventListener('change', (e) => toggleHabit(cb.dataset.id, cb.checked));
-        });
-    }
-    
-    // Calendario mensual editable
-    function renderCalendar(monthIndex) {
-        const container = document.getElementById('monthlyCalendar');
-        if (!container) return;
-        const mes = mesesData[monthIndex];
-        if (!mes || !mes.unlocked) { container.innerHTML = '<div style="text-align:center;padding:20px;">🔒 Completa el mes anterior para desbloquear este calendario</div>'; return; }
-        const year = mes.fechaInicio.getFullYear();
-        const month = mes.fechaInicio.getMonth();
-        const firstDay = new Date(year, month, mes.fechaInicio.getDate());
-        const startDay = firstDay.getDay();
-        const daysInMonth = mes.fechaFin.getDate();
-        const today = new Date();
-        const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
-        
-        let calendarHtml = `<div style="text-align:center; margin-bottom:12px;"><strong>${mes.nombre}</strong></div><div class="calendar-grid">`;
-        const diasSemana = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'];
-        diasSemana.forEach(d => calendarHtml += `<div style="text-align:center;font-weight:bold;">${d}</div>`);
-        for (let i = 0; i < startDay; i++) calendarHtml += `<div></div>`;
-        for (let d = mes.fechaInicio.getDate(); d <= daysInMonth; d++) {
-            const isToday = isCurrentMonth && today.getDate() === d;
-            const idea = mes.ideas[d] || '';
-            calendarHtml += `<div class="calendar-day ${idea ? 'has-idea' : ''} ${isToday ? 'today' : ''}" data-day="${d}">
-                                <strong>${d}</strong>
-                                ${idea ? `<span class="idea-badge"><i class="fas fa-lightbulb"></i> ${idea.substring(0, 15)}${idea.length>15?'...':''}</span>` : ''}
-                                <input type="text" class="idea-input" placeholder="Añadir idea..." value="${escapeHtml(idea)}" data-day="${d}">
-                            </div>`;
+            renderHabitsList();
+            renderDonut();
+            renderCalendar(monthIndex);
         }
-        calendarHtml += `</div><button class="btn-cozy" id="saveIdeasBtn"><i class="fas fa-save"></i> Guardar ideas del mes</button>`;
-        container.innerHTML = calendarHtml;
         
-        document.querySelectorAll('.idea-input').forEach(inp => {
-            inp.addEventListener('change', (e) => {
-                const day = parseInt(inp.dataset.day);
-                mes.ideas[day] = inp.value;
-                saveAll();
+        function renderHistoryList() {
+            const container = document.getElementById('historyList');
+            if (!container) return;
+            container.innerHTML = historyEntries.slice(0, 15).map(entry => `
+                <div class="history-item"><span>${new Date(entry.fecha).toLocaleString('es-CL')}</span><span>${entry.mensaje}</span></div>
+            `).join('');
+            if (historyEntries.length === 0) container.innerHTML = '<div class="history-item">Completa hábitos para ver tu historial</div>';
+        }
+        
+        function buildSidebar() {
+            const container = document.getElementById('periodList');
+            if (!container) return;
+            container.innerHTML = '';
+            mesesData.forEach((mes, idx) => {
+                const div = document.createElement('div');
+                div.className = `period-item ${idx === currentMonthIndex ? 'active' : ''} ${!mes.unlocked ? 'locked' : ''}`;
+                div.innerHTML = `<i class="fas ${mes.unlocked ? 'fa-unlock-alt' : 'fa-lock'}"></i><span>${mes.nombre}</span>`;
+                if (mes.unlocked) {
+                    div.addEventListener('click', () => { currentMonthIndex = idx; buildSidebar(); renderPeriodView(idx); });
+                }
+                container.appendChild(div);
             });
-        });
-        document.getElementById('saveIdeasBtn')?.addEventListener('click', () => {
-            saveAll();
-            showAchievement(`📝 Ideas de ${mes.nombre} guardadas`);
-        });
-    }
-    
-    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-    
-    // Donut chart
-    function renderDonut() {
-        const canvas = document.getElementById('donutChart');
-        if (!canvas) return;
-        const completados = habitosData.filter(h => h.completado).length;
-        const total = habitosData.length;
-        const pending = total - completados;
-        if (chartInstance) chartInstance.destroy();
-        const ctx = canvas.getContext('2d');
-        chartInstance = new Chart(ctx, {
-            type: 'doughnut',
-            data: { labels: ['Hábitos Completados', 'Pendientes'], datasets: [{ data: [completados, pending], backgroundColor: ['#D4BFA8', '#EFE5DB'], cutout: '65%', borderWidth: 0 }] },
-            options: { plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw} de ${total}` } } }, responsive: true }
-        });
-    }
-    
-    function renderPeriodView(monthIndex) {
-        const mes = mesesData[monthIndex];
-        if (!mes) return;
-        const isNocturno = mes.nombre.includes("Mayo");
-        const horario = isNocturno ? HORARIO_ESTANDAR.map(h => ({ ...h, hora: (parseInt(h.hora)+3)+":00" })) : HORARIO_ESTANDAR;
-        const mainDiv = document.getElementById('mainContent');
-        mainDiv.innerHTML = `
-            <div class="info-card"><div class="card-header"><i class="fas fa-info-circle"></i> Resumen · ${mes.nombre}</div>
-                <div class="info-grid"><div class="info-badge"><strong>📅 Período</strong><span>${mes.fechaInicio.toLocaleDateString('es-CL')} - ${mes.fechaFin.toLocaleDateString('es-CL')}</span></div>
-                <div class="info-badge"><strong>🏆 Estado</strong><span>${mes.unlocked ? '✅ Desbloqueado' : '🔒 Bloqueado'}</span></div></div>
-            </div>
-            <div class="info-card"><div class="card-header"><i class="fas fa-list-check"></i> Hábitos Diarios · Recordatorios</div>
-                <div id="habitsContainer"></div><div class="donut-wrapper"><canvas id="donutChart" width="200" height="200"></canvas></div>
-            </div>
-            <div class="info-card"><div class="card-header"><i class="fas fa-table-list"></i> Horario del Día</div>
-                <div class="schedule-wrapper"><table class="horario-table"><thead><tr><th>Hora</th><th>Actividad</th><th>Duración</th></tr></thead><tbody>
-                ${horario.map(row => `<tr><td>${row.hora}</td><td>${row.actividad}</td><td>${row.duracion} min</td></tr>`).join('')}</tbody></table></div>
-            </div>
-            <div class="calendar-card"><div class="card-header"><i class="fas fa-calendar-alt"></i> Calendario Mensual · Ideas</div>
-                <div id="monthlyCalendar"></div>
-            </div>
-        `;
-        renderHabitsList();
-        renderDonut();
-        renderCalendar(monthIndex);
-    }
-    
-    function renderHistoryList() {
-        const container = document.getElementById('historyList');
-        if (!container) return;
-        container.innerHTML = historyEntries.slice(0, 20).map(entry => `
-            <div class="history-item"><span>${new Date(entry.fecha).toLocaleString('es-CL')}</span><span>${entry.mensaje}</span></div>
-        `).join('');
-    }
-    
-    function buildSidebar() {
-        const container = document.getElementById('periodList');
-        container.innerHTML = '';
-        mesesData.forEach((mes, idx) => {
-            const div = document.createElement('div');
-            div.className = `period-item ${idx === currentMonthIndex ? 'active' : ''} ${!mes.unlocked ? 'locked' : ''}`;
-            div.innerHTML = `<i class="fas ${mes.unlocked ? 'fa-unlock-alt' : 'fa-lock'}"></i><span>${mes.nombre}</span>`;
-            if (mes.unlocked) {
-                div.addEventListener('click', () => { currentMonthIndex = idx; buildSidebar(); renderPeriodView(idx); });
-            }
-            container.appendChild(div);
-        });
-    }
-    
-    function updateClock() {
-        const clockEl = document.getElementById('liveClock');
-        if (clockEl) clockEl.innerHTML = new Date().toLocaleTimeString('es-CL');
-        requestAnimationFrame(() => setTimeout(updateClock, 1000));
-    }
-    
-    // Inicialización
-    function init() {
-        checkMonthUnlocks();
-        buildSidebar();
-        const firstUnlocked = mesesData.findIndex(m => m.unlocked);
-        if (firstUnlocked !== -1) { currentMonthIndex = firstUnlocked; renderPeriodView(firstUnlocked); }
-        else renderPeriodView(0);
-        renderHistoryList();
-        updateClock();
-        setInterval(() => { checkMonthUnlocks(); checkHabitReminders(); resetDailyHabits(); }, 60000);
-        if (Notification.permission === 'default') Notification.requestPermission();
-        // Crear partículas
-        for (let i = 0; i < 40; i++) {
-            const p = document.createElement('div'); p.className = 'particle';
-            p.style.width = p.style.height = Math.random() * 5 + 2 + 'px';
-            p.style.left = Math.random() * 100 + '%';
-            p.style.animationDuration = Math.random() * 15 + 10 + 's';
-            p.style.animationDelay = Math.random() * 20 + 's';
-            document.body.appendChild(p);
         }
-    }
-    init();
+        
+        function updateClock() {
+            const clockEl = document.getElementById('liveClock');
+            if (clockEl) clockEl.innerHTML = new Date().toLocaleTimeString('es-CL');
+            requestAnimationFrame(() => setTimeout(updateClock, 1000));
+        }
+        
+        function init() {
+            checkMonthUnlocks();
+            buildSidebar();
+            const firstUnlocked = mesesData.findIndex(m => m.unlocked);
+            if (firstUnlocked !== -1) { currentMonthIndex = firstUnlocked; renderPeriodView(firstUnlocked); }
+            else renderPeriodView(0);
+            renderHistoryList();
+            updateClock();
+            setInterval(() => { checkMonthUnlocks(); checkHabitReminders(); resetDailyHabits(); }, 60000);
+            if (Notification.permission === 'default') Notification.requestPermission();
+            
+            for (let i = 0; i < 30; i++) {
+                const p = document.createElement('div'); p.className = 'particle';
+                p.style.width = p.style.height = Math.random() * 5 + 2 + 'px';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = Math.random() * 15 + 10 + 's';
+                p.style.animationDelay = Math.random() * 20 + 's';
+                document.body.appendChild(p);
+            }
+        }
+        
+        init();
+    })();
 </script>
 </body>
 </html>
