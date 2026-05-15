@@ -135,17 +135,13 @@
         .horario-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         .horario-table th, .horario-table td { padding: 12px; border-bottom: 1px solid #F0E7DE; text-align: left; }
         .horario-table tr:hover { background: #FDF9F4; }
-        .flexible-badge {
-            background: #FFF3E8;
-            border-radius: 20px;
-            padding: 2px 8px;
-            font-size: 0.65rem;
-            display: inline-block;
-            margin-left: 8px;
-            color: #E2A468;
-        }
         .donut-wrapper { max-width: 260px; margin: 20px auto 0; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 16px; }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-top: 16px;
+        }
         .calendar-day {
             background: #FCF8F2;
             border-radius: 16px;
@@ -154,10 +150,20 @@
             font-size: 0.8rem;
             border: 1px solid #EFE5DB;
             transition: all 0.2s;
+            min-height: 80px;
         }
+        .calendar-day:hover { background: #F5EDE3; transform: scale(1.02); }
         .calendar-day.has-idea { background: #EBDDCB; border-color: #D4BFA8; }
         .calendar-day.today { background: #D4BFA8; color: white; }
-        .idea-badge { font-size: 0.7rem; display: block; margin-top: 4px; color: #A4815C; }
+        .calendar-day.empty { background: transparent; border-color: transparent; }
+        .idea-badge {
+            font-size: 0.65rem;
+            display: block;
+            margin-top: 6px;
+            color: #A4815C;
+            word-break: break-word;
+            line-height: 1.2;
+        }
         .alert-banner {
             background: #FFF3E8;
             border-radius: 60px;
@@ -177,21 +183,6 @@
             margin-bottom: 20px;
             text-align: center;
         }
-        .habit-list { margin-top: 16px; }
-        .habit-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 10px 0;
-            border-bottom: 1px solid #F0E7DE;
-        }
-        .habit-status {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #D4BFA8;
-        }
-        .habit-status.completed { background: #8BC34A; box-shadow: 0 0 5px #8BC34A; }
         footer {
             text-align: center;
             margin-top: 48px;
@@ -202,11 +193,8 @@
         }
         .loading { text-align: center; padding: 80px 20px; color: #B8A48A; }
         @media (max-width: 900px) { .period-list { flex-direction: row; flex-wrap: wrap; } .main-content { padding: 20px; } }
-        .version-badge {
-            font-size: 0.7rem;
-            color: #C1A88B;
-            margin-top: 10px;
-        }
+        .version-badge { font-size: 0.7rem; color: #C1A88B; margin-top: 10px; }
+        .month-title { font-size: 1.1rem; font-weight: 600; color: #A4815C; margin-bottom: 12px; text-align: center; }
     </style>
 </head>
 <body>
@@ -235,13 +223,11 @@
 
 <script>
 (async function() {
-    // ==================== CARGA DE DATOS ====================
     let appData = null;
     let currentMonthIndex = 0;
     let chartInstance = null;
     let audioCtx = null;
     let alarmInterval = null;
-    let habitStatus = {}; // Guarda el estado de hábitos completados hoy (solo visual, no persistente)
     
     try {
         const response = await fetch('data.json?v=' + Date.now());
@@ -249,22 +235,13 @@
         appData = await response.json();
         document.getElementById('versionBadge').innerHTML = `📅 Datos: ${appData.version} · Actualizado: ${appData.lastUpdated}`;
     } catch (error) {
-        console.error('Error cargando datos:', error);
-        document.getElementById('mainContent').innerHTML = `
-            <div class="info-card" style="text-align:center;">
-                <div class="card-header"><i class="fas fa-exclamation-triangle"></i> Error</div>
-                <p>No se pudo cargar el archivo data.json</p>
-                <p style="margin-top:16px; font-size:0.8rem;">Asegúrate de que el archivo existe en el mismo directorio.</p>
-            </div>
-        `;
+        console.error('Error:', error);
+        document.getElementById('mainContent').innerHTML = `<div class="info-card"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> Error</div><p>No se pudo cargar data.json</p></div>`;
         return;
     }
     
     const meses = appData.meses;
-    const habitosBase = appData.habitos;
-    const temasMensuales = appData.temasMensuales || {};
     
-    // ==================== UTILIDADES ====================
     function formatFechaChilena(date) {
         return `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}/${date.getFullYear()}`;
     }
@@ -288,13 +265,12 @@
             let duration = parseInt(row.duracion) || 0;
             let activityEnd = activityStart + duration;
             if (currentMinutes >= activityStart && currentMinutes < activityEnd) {
-                return { actividad: row.actividad, inicio: row.hora, duracion: row.duracion, flexible: row.flexible };
+                return { actividad: row.actividad, inicio: row.hora };
             }
         }
         return null;
     }
     
-    // ==================== SONIDO Y NOTIFICACIONES ====================
     function playLoudBeep() {
         try {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -315,14 +291,13 @@
     function sendNotification(title, body) {
         playLoudBeep();
         if (Notification.permission === 'granted') {
-            new Notification(title, { body, icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='85' font-size='85' text-anchor='middle' fill='%23E8C9A3'%3E⏰%3C/text%3E%3C/svg%3E" });
+            new Notification(title, { body });
         } else if (Notification.permission !== 'denied') {
             Notification.requestPermission();
         }
     }
     
-    // ==================== ALARMAS ====================
-    function startAlarmSystem(horario) {
+    function startAlarmSystem(horario, habitos) {
         if (alarmInterval) clearInterval(alarmInterval);
         alarmInterval = setInterval(() => {
             const now = new Date();
@@ -331,73 +306,113 @@
             if (actividadAhora) {
                 sendNotification(`🔔 RitmoLab · ${actividadAhora.actividad}`, `⏰ Es hora de: ${actividadAhora.actividad}`);
             }
-            
-            // También verificar hábitos
-            const habitoAhora = habitosBase.find(h => h.hora === currentTime);
-            if (habitoAhora && !habitStatus[habitoAhora.id]) {
-                sendNotification(`⏰ Recordatorio: ${habitoAhora.nombre}`, `Es momento de ${habitoAhora.nombre.toLowerCase()}`);
+            const habitoAhora = habitos?.find(h => h.hora === currentTime);
+            if (habitoAhora) {
+                sendNotification(`⏰ Recordatorio`, `${habitoAhora.nombre}`);
             }
         }, 60000);
     }
     
-    // ==================== DONUT CHART ====================
     function renderDonut(horario) {
         const canvas = document.getElementById('donutChart');
         if (!canvas) return;
         let activitySum = new Map();
         horario.forEach(row => {
-            let act = row.actividad;
+            let act = row.actividad.split('(')[0].trim();
             let dur = parseInt(row.duracion) || 0;
             activitySum.set(act, (activitySum.get(act) || 0) + dur);
         });
         let labels = [], data = [], bgColors = [];
         const colorMap = {
-            "Levantar + higiene + lavar dientes": "#E8D5CC", "Desayuno": "#F5E8C7",
-            "Estudio comida (si hay tarea)": "#C7D9C5", "BLENDER": "#B8D4E3",
-            "EJERCICIO": "#E2C2B3", "Tiempo libre": "#D6D6D6", "Almuerzo": "#F0D9B5",
-            "Once": "#D9C5B3", "Preparar dormir + lavar dientes": "#C5D6D9", "Dormir": "#B3C4C4"
+            "Levantar + ordenar + higiene": "#E8D5CC", "Desayuno + lavar dientes": "#F5E8C7",
+            "ESTUDIO CLASES": "#C7D9C5", "BLENDER": "#B8D4E3", "EJERCICIO": "#E2C2B3",
+            "Tiempo libre": "#D6D6D6", "Almuerzo + lavar dientes": "#F0D9B5",
+            "Once + lavar dientes": "#D9C5B3", "Preparar dormir + lavar dientes": "#C5D6D9", "Dormir": "#B3C4C4"
         };
         for (let [act, mins] of activitySum) {
             if (mins / 1440 < 0.02) continue;
             labels.push(act.length > 20 ? act.slice(0,18)+"..." : act);
             data.push(mins);
-            let key = act.split('(')[0].trim();
-            bgColors.push(colorMap[key] || `hsl(${(act.length * 43) % 360}, 65%, 78%)`);
+            bgColors.push(colorMap[act] || `hsl(${(act.length * 43) % 360}, 65%, 78%)`);
         }
         if (chartInstance) chartInstance.destroy();
         const ctx = canvas.getContext('2d');
         chartInstance = new Chart(ctx, {
             type: 'doughnut',
             data: { labels, datasets: [{ data, backgroundColor: bgColors, cutout: '68%', borderWidth: 0 }] },
-            options: { plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${(ctx.raw/60).toFixed(1)}h (${((ctx.raw/1440)*100).toFixed(1)}%)` } } }, responsive: true }
+            options: { plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${(ctx.raw/60).toFixed(1)}h` } } }, responsive: true }
         });
     }
     
-    // ==================== RENDER PRINCIPAL ====================
+    // Limpiar actividad para mostrar solo el nombre base
+    function cleanActivityName(name) {
+        return name.split('(')[0].trim();
+    }
+    
+    function renderCalendar(mes) {
+        const inicio = new Date(mes.fechaInicio);
+        const fin = new Date(mes.fechaFin);
+        const year = inicio.getFullYear();
+        const month = inicio.getMonth();
+        const startDay = inicio.getDate();
+        const endDay = fin.getDate();
+        const firstDayOfMonth = new Date(year, month, 1);
+        const startWeekday = firstDayOfMonth.getDay();
+        const today = new Date();
+        const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+        const ideas = mes.ideas || {};
+        
+        let html = `<div class="month-title">📅 ${mes.nombre}</div>`;
+        html += `<div class="calendar-grid">`;
+        const diasSemana = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'];
+        diasSemana.forEach(d => html += `<div style="text-align:center;font-weight:bold; font-size:0.7rem; padding:4px;">${d}</div>`);
+        
+        for (let i = 0; i < startWeekday; i++) html += `<div class="calendar-day empty"></div>`;
+        
+        for (let d = 1; d <= endDay; d++) {
+            const isInRange = d >= startDay;
+            const isToday = isCurrentMonth && today.getDate() === d && isInRange;
+            const idea = ideas[d];
+            
+            if (!isInRange && d < startDay) {
+                html += `<div class="calendar-day empty" style="opacity:0.3;">${d}</div>`;
+            } else {
+                html += `<div class="calendar-day ${idea ? 'has-idea' : ''} ${isToday ? 'today' : ''}">
+                            <strong>${d}</strong>
+                            ${idea ? `<span class="idea-badge">${idea.length > 30 ? idea.substring(0, 27)+'...' : idea}</span>` : ''}
+                        </div>`;
+            }
+        }
+        html += `</div>`;
+        return html;
+    }
+    
     function renderPeriodView(monthIndex) {
         const mes = meses[monthIndex];
         if (!mes) return;
-        const horario = mes.horario;
-        const esNocturno = mes.tipo === 'nocturno';
-        const temaMes = temasMensuales[mes.id] || "Tema especial del mes";
+        const horario = mes.horario.map(h => ({
+            ...h,
+            actividad: cleanActivityName(h.actividad)
+        }));
         const currentActivity = getCurrentActivity(horario);
+        const habitos = appData.habitos;
         
         const mainDiv = document.getElementById('mainContent');
         mainDiv.innerHTML = `
             <div class="current-activity">
                 <i class="fas fa-hourglass-half" style="font-size:1.5rem; color:#E2A468;"></i>
-                <h3 style="margin-top:8px;">Ahora mismo</h3>
-                <p style="font-size:1.1rem; margin-top:8px;">${currentActivity ? currentActivity.actividad : 'Descanso o tiempo libre'}</p>
-                <small>${currentActivity ? `de ${currentActivity.inicio} (${currentActivity.duracion} min)` : 'Fuera del horario establecido'}</small>
+                <h3 style="margin-top:8px;">MES DE HOY: ${mes.nombre}</h3>
+                <p style="font-size:1.1rem; margin-top:8px;">Ahora mismo: ${currentActivity ? currentActivity.actividad : 'Descanso o tiempo libre'}</p>
+                <small>${currentActivity ? `desde las ${currentActivity.inicio}` : 'Fuera del horario establecido'}</small>
             </div>
             
             <div class="info-card">
-                <div class="card-header"><i class="fas fa-info-circle"></i> ${mes.nombre}</div>
+                <div class="card-header"><i class="fas fa-info-circle"></i> Resumen · ${mes.nombre}</div>
                 <div class="info-grid">
                     <div class="info-badge"><strong>📅 Período</strong><span>${formatFechaChilena(new Date(mes.fechaInicio))} - ${formatFechaChilena(new Date(mes.fechaFin))}</span></div>
-                    <div class="info-badge"><strong>🎯 Tema del mes</strong><span>${temaMes}</span></div>
-                    <div class="info-badge"><strong>💪 Ejercicio</strong><span>${esNocturno ? "Mar, Jue, Sáb 17:00" : "Mar, Jue 17:00"}</span></div>
-                    <div class="info-badge"><strong>🖥️ Blender</strong><span>${esNocturno ? "Lun/Mie/Vie 15h · Mar/Jue/Sab/Dom 18:30h" : "Lun/Vie 11h · Mie/Dom 15h"}</span></div>
+                    <div class="info-badge"><strong>💪 Ejercicio</strong><span>${mes.tipo === 'nocturno' ? "Mar, Jue, Sáb 17:00" : "Mar, Jue 17:00"}</span></div>
+                    <div class="info-badge"><strong>🎨 Blender</strong><span>${mes.tipo === 'nocturno' ? "Lun/Mie/Vie 15h · Mar/Jue/Sab/Dom 18:30h" : "Lun/Vie 11h · Mie/Dom 15h"}</span></div>
+                    <div class="info-badge"><strong>📚 Clases</strong><span>${mes.tipo === 'nocturno' ? "12:00 - 14:00" : "09:00 - 11:00"}</span></div>
                 </div>
             </div>
             
@@ -407,17 +422,10 @@
                     <table class="horario-table">
                         <thead><tr><th>Hora</th><th>Actividad</th><th>Duración</th></tr></thead>
                         <tbody>
-                            ${horario.map(row => `
-                                <tr>
-                                    <td style="font-weight:500;">${row.hora}</td>
-                                    <td>${row.actividad} ${row.flexible ? '<span class="flexible-badge"><i class="fas fa-hand-peace"></i> flexible</span>' : ''}</td>
-                                    <td>${row.duracion} min</td>
-                                </tr>
-                            `).join('')}
+                            ${horario.map(row => `<tr><td style="font-weight:500;">${row.hora}</td><td>${row.actividad}</td><td>${row.duracion} min</td></tr>`).join('')}
                         </tbody>
                     </table>
                 </div>
-                ${horario.some(r => r.flexible) ? '<div class="flexible-badge" style="margin-top:12px; display:inline-block;"><i class="fas fa-info-circle"></i> Estudio comida: solo cuando hay tarea, el resto es tiempo libre</div>' : ''}
             </div>
             
             <div class="info-card">
@@ -427,49 +435,15 @@
             
             <div class="info-card">
                 <div class="card-header"><i class="fab fa-youtube"></i> Calendario de Contenido · Ideas</div>
-                <div class="calendar-grid" id="calendarGrid"></div>
+                ${renderCalendar(mes)}
                 <div style="margin-top:12px; font-size:0.7rem; color:#B8A48A;"><i class="fas fa-lightbulb"></i> Días con ideas: fondo color crema</div>
             </div>
         `;
         
-        // Renderizar calendario
-        const calendarGrid = document.getElementById('calendarGrid');
-        if (calendarGrid) {
-            const year = new Date(mes.fechaInicio).getFullYear();
-            const month = new Date(mes.fechaInicio).getMonth();
-            const firstDay = new Date(mes.fechaInicio);
-            const startDay = firstDay.getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const today = new Date();
-            const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
-            const ideas = mes.ideas || {};
-            
-            const diasSemana = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'];
-            let html = diasSemana.map(d => `<div style="text-align:center;font-weight:bold; font-size:0.7rem;">${d}</div>`).join('');
-            for (let i = 0; i < startDay; i++) html += `<div></div>`;
-            for (let d = 1; d <= daysInMonth; d++) {
-                const isToday = isCurrentMonth && today.getDate() === d;
-                const idea = ideas[d];
-                const isAfterStart = d >= firstDay.getDate() || month > firstDay.getMonth();
-                if (month === firstDay.getMonth() && d < firstDay.getDate()) {
-                    html += `<div style="opacity:0.3;"></div>`;
-                } else {
-                    html += `
-                        <div class="calendar-day ${idea ? 'has-idea' : ''} ${isToday ? 'today' : ''}">
-                            <strong>${d}</strong>
-                            ${idea ? `<span class="idea-badge">${idea.length > 25 ? idea.substring(0, 22)+'...' : idea}</span>` : ''}
-                        </div>
-                    `;
-                }
-            }
-            calendarGrid.innerHTML = html;
-        }
-        
         renderDonut(horario);
-        startAlarmSystem(horario);
+        startAlarmSystem(horario, habitos);
     }
     
-    // ==================== SIDEBAR ====================
     function buildSidebar() {
         const container = document.getElementById('periodList');
         if (!container) return;
@@ -487,7 +461,6 @@
         });
     }
     
-    // ==================== RELOJ ====================
     function updateClock() {
         const clockEl = document.getElementById('liveClock');
         if (clockEl) {
@@ -497,7 +470,6 @@
         requestAnimationFrame(() => setTimeout(updateClock, 1000));
     }
     
-    // ==================== INICIALIZACIÓN ====================
     currentMonthIndex = getCurrentMonthIndex();
     buildSidebar();
     renderPeriodView(currentMonthIndex);
@@ -505,7 +477,6 @@
     
     if (Notification.permission === 'default') Notification.requestPermission();
     
-    // Partículas decorativas
     for (let i = 0; i < 40; i++) {
         const p = document.createElement('div');
         p.style.position = 'fixed';
