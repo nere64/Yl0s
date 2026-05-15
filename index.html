@@ -3,110 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>RitmoLab · Youtuber Life Studio</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='85' font-size='85' text-anchor='middle' fill='%23D4A574'%3E🎬%3C/text%3E%3C/svg%3E">
+    <title>RitmoLab · Youtuber Flow · Modo Alerta</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='85' font-size='85' text-anchor='middle' fill='%23D4A574'%3E⏰%3C/text%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Nunito:wght@300;400;500;600;700&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: #F5F0E8;
-            background-image: radial-gradient(#E8DFD3 1px, transparent 1px);
-            background-size: 32px 32px;
+            background: #F2EDE5;
+            background-image: radial-gradient(#E3D9CE 0.8px, transparent 0.8px);
+            background-size: 28px 28px;
             font-family: 'Inter', 'Nunito', sans-serif;
-            color: #3D3529;
-            padding: 28px 24px;
+            color: #3A3228;
+            padding: 20px;
+            min-height: 100vh;
         }
-        /* Scroll cozy */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #EDE5DB; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #CBBAA5; border-radius: 10px; }
         
-        .app-container { max-width: 1600px; margin: 0 auto; }
-        .dashboard { display: flex; gap: 28px; flex-wrap: wrap; }
+        /* Layout principal más cómodo */
+        .app-container {
+            max-width: 1500px;
+            margin: 0 auto;
+        }
         
-        /* Sidebar cálida */
-        .period-sidebar {
-            flex: 1.1;
-            min-width: 270px;
-            background: #FFFCF8;
-            border-radius: 36px;
-            padding: 24px 18px;
+        /* Header con frase motivacional */
+        .hero-header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 16px 24px;
+            background: #FFFFFFD9;
+            backdrop-filter: blur(8px);
+            border-radius: 48px;
             border: 1px solid #F0E4D6;
-            box-shadow: 0 12px 28px rgba(0,0,0,0.03);
-            backdrop-filter: blur(2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+        .hero-header h1 {
+            font-family: 'Caveat', cursive;
+            font-size: 2.2rem;
+            color: #9B7B5C;
+            letter-spacing: 1px;
+        }
+        .hero-header .frase {
+            font-family: 'Caveat', cursive;
+            font-size: 1.1rem;
+            color: #B8A487;
+            margin-top: 4px;
+        }
+        
+        .dashboard {
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+        }
+        
+        /* Sidebar mejorada - más cómoda */
+        .period-sidebar {
+            flex: 0.9;
+            min-width: 260px;
+            background: #FFFCF9;
+            border-radius: 32px;
+            padding: 20px 16px;
+            border: 1px solid #EDE2D6;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
             height: fit-content;
             position: sticky;
-            top: 24px;
+            top: 20px;
             transition: all 0.2s;
         }
         .period-sidebar h2 {
             font-weight: 600;
-            font-size: 1.35rem;
-            margin-bottom: 24px;
-            color: #9B7B5C;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #A4815C;
             font-family: 'Caveat', cursive;
-            letter-spacing: 1px;
-            border-bottom: 2px dashed #EADCCE;
-            display: inline-block;
-            padding-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-left: 8px;
+            border-left: 3px solid #E2CDB5;
         }
-        .period-list { display: flex; flex-direction: column; gap: 10px; max-height: 55vh; overflow-y: auto; padding-right: 6px; }
+        .period-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 55vh;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
         .period-item {
-            padding: 14px 18px;
-            border-radius: 60px;
+            padding: 14px 16px;
+            border-radius: 20px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.25s ease;
+            transition: all 0.2s ease;
             background: #FCF8F2;
-            border: 1px solid #EEE3D6;
-            font-size: 0.85rem;
+            border: 1px solid #EDE1D3;
+            font-size: 0.82rem;
             color: #5E5343;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+        .period-item i { width: 24px; color: #C1A88B; }
         .period-item.active {
             background: #EBDDCB;
             border-color: #D4BFA8;
             color: #3E2E1F;
             font-weight: 600;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
             transform: translateX(4px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
         .period-item:hover:not(.active) { background: #F5EDE3; transform: translateX(2px); }
         
-        /* Main Content cozy */
+        /* Main content - diseño cómodo y amplio */
         .main-content {
             flex: 3;
-            min-width: 360px;
-            background: #FFFFFFF5;
-            border-radius: 40px;
-            border: 1px solid #F0E6DC;
-            padding: 28px 30px;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.02);
-            backdrop-filter: blur(3px);
+            min-width: 380px;
+            background: #FFFFFFF2;
+            backdrop-filter: blur(2px);
+            border-radius: 36px;
+            border: 1px solid #EDE2D6;
+            padding: 28px 32px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.03);
         }
         
-        /* Secciones con estilo acogedor */
-        .cozy-card {
+        /* Tarjetas elegantes */
+        .info-card {
             background: #FEFCF9;
             border-radius: 28px;
-            border: 1px solid #F1E7DE;
-            padding: 24px 26px;
-            margin-bottom: 28px;
+            border: 1px solid #EFE5DB;
+            padding: 20px 26px;
+            margin-bottom: 24px;
             transition: all 0.2s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
-        .card-title {
-            font-size: 1.4rem;
-            font-weight: 600;
+        .card-header {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             font-family: 'Caveat', cursive;
+            font-size: 1.35rem;
             color: #A4815C;
             border-left: 4px solid #E2CDB5;
-            padding-left: 18px;
+            padding-left: 16px;
+        }
+        .card-header i { font-size: 1.3rem; }
+        
+        /* Grid de información rápida */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+            margin-top: 8px;
+        }
+        .info-badge {
+            background: #F8F3EC;
+            border-radius: 20px;
+            padding: 14px 18px;
+            border-left: 5px solid #D4BFA8;
+        }
+        .info-badge strong { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #B29476; }
+        .info-badge span { font-size: 0.95rem; font-weight: 500; color: #4A3F32; margin-top: 6px; display: block; }
+        
+        /* Tabla horaria - solo lectura pero elegante */
+        .schedule-wrapper {
+            overflow-x: auto;
+            border-radius: 20px;
+            margin-top: 8px;
         }
         .horario-table {
             width: 100%;
@@ -115,70 +178,47 @@
         }
         .horario-table th {
             text-align: left;
-            padding: 14px 10px;
+            padding: 14px 12px;
             background: #FAF5EE;
             font-weight: 600;
             color: #836E53;
             border-bottom: 2px solid #EFE2D4;
+            font-size: 0.8rem;
         }
         .horario-table td {
-            padding: 12px 10px;
-            border-bottom: 1px solid #F2E9DF;
+            padding: 12px 12px;
+            border-bottom: 1px solid #F0E7DE;
             vertical-align: middle;
         }
-        .editable-cell {
-            background: transparent;
-            border-radius: 14px;
-            padding: 6px 8px;
-            outline: none;
-            transition: 0.1s;
-            cursor: text;
-            border: 1px solid transparent;
-        }
-        .editable-cell:hover { background: #FFF8EF; border-color: #E8D9CA; }
-        .editable-cell:focus { background: #FFFDF7; border-color: #D9C5AE; box-shadow: 0 0 0 2px #F0E2D4; }
-        .btn-cozy {
-            background: #F3EAE1;
-            border: none;
-            padding: 8px 18px;
+        .horario-table tr:hover { background: #FDF9F4; }
+        
+        /* Alertas y badges */
+        .badge-day {
+            display: inline-block;
+            background: #EBDDCB;
             border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.2s;
-            color: #6B5A48;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #6B4E31;
         }
-        .btn-cozy i { margin-right: 8px; }
-        .btn-cozy:hover { background: #E8DACA; transform: scale(0.96); }
-        
-        /* To-Do List diseño especial */
-        .todo-item {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 12px 0;
-            border-bottom: 1px solid #F0E6DC;
+        .current-highlight {
+            background: #F9F0E6;
+            border-left: 4px solid #E2B88A;
         }
-        .todo-check { width: 22px; height: 22px; accent-color: #D4BFA8; cursor: pointer; }
-        .todo-text { flex: 1; font-size: 0.9rem; }
-        .todo-done { text-decoration: line-through; opacity: 0.6; }
         
-        .weekly-grid {
+        /* Donut y calendario */
+        .donut-wrapper {
+            max-width: 260px;
+            margin: 0 auto;
+        }
+        .youtube-grid {
             display: flex;
+            flex-wrap: wrap;
             gap: 12px;
-            overflow-x: auto;
-            padding-bottom: 8px;
+            margin-top: 12px;
         }
-        .day-card {
-            min-width: 100px;
-            background: #FEF8F2;
-            border-radius: 24px;
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #ECE0D2;
-        }
-        .donut-wrapper { max-width: 240px; margin: 0 auto; }
-        .youtube-chip {
+        .yt-chip {
             background: #F8F2EA;
             border-radius: 60px;
             padding: 8px 20px;
@@ -188,389 +228,423 @@
             font-size: 0.8rem;
             border: 1px solid #E6D9CB;
         }
+        
+        /* Estado de alerta */
+        .alert-banner {
+            background: #FFF3E8;
+            border-radius: 24px;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #F0DCC8;
+            font-size: 0.85rem;
+        }
+        .alert-banner i { font-size: 1.2rem; color: #E2A468; }
+        
         footer {
             text-align: center;
-            margin-top: 36px;
-            font-size: 0.8rem;
+            margin-top: 40px;
+            font-size: 0.75rem;
             color: #CCBFAD;
             font-family: 'Caveat', cursive;
             padding: 16px;
         }
-        .modal {
-            display: none;
-            position: fixed;
-            top:0;left:0;
-            width:100%;height:100%;
-            background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(6px);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .modal-card {
-            background: #FFFDF9;
-            max-width: 460px;
-            width: 90%;
-            border-radius: 40px;
-            padding: 28px;
-            border: 1px solid #EADCCE;
-        }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        @media (max-width: 850px) {
-            body { padding: 16px; }
-            .period-list { flex-direction: row; flex-wrap: wrap; gap: 8px; }
-            .period-item { padding: 10px 16px; font-size: 0.75rem; }
+        
+        @media (max-width: 900px) {
+            body { padding: 12px; }
+            .period-list { flex-direction: row; flex-wrap: wrap; gap: 8px; max-height: none; }
+            .period-item { padding: 10px 16px; font-size: 0.7rem; }
+            .period-sidebar { position: static; }
             .main-content { padding: 20px; }
+            .info-grid { grid-template-columns: 1fr; }
         }
-        .info-badge {
-            background: #FAF4EC;
-            border-radius: 24px;
-            padding: 12px 16px;
-            margin-bottom: 16px;
-            border-left: 6px solid #E2CBB2;
+        
+        /* Animación sutil */
+        @keyframes softPulse {
+            0% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        .live-clock {
+            font-family: monospace;
+            font-size: 1rem;
+            background: #2C2A29;
+            color: #F2E8DC;
+            padding: 6px 14px;
+            border-radius: 40px;
+            display: inline-block;
         }
     </style>
 </head>
 <body>
 <div class="app-container">
+    <div class="hero-header">
+        <h1><i class="fas fa-film"></i> RitmoLab Studio · Youtuber Flow</h1>
+        <div class="frase">"ritmo, no presión · constancia, no intensidad"</div>
+        <div style="margin-top: 10px;"><span class="live-clock" id="liveClock"></span></div>
+    </div>
+    
     <div class="dashboard">
         <div class="period-sidebar">
-            <h2><i class="fas fa-feather-alt"></i> RitmoLab Studio</h2>
+            <h2><i class="fas fa-calendar-alt"></i> Períodos · 12 Meses</h2>
             <div class="period-list" id="periodList"></div>
-            <div class="flex-between" style="margin-top: 28px; gap: 10px;">
-                <button id="exportBackupBtn" class="btn-cozy"><i class="fas fa-save"></i> Backup</button>
-                <button id="importBackupBtn" class="btn-cozy"><i class="fas fa-folder-open"></i> Importar</button>
-                <input type="file" id="importFile" accept=".json" style="display: none;">
+            <div class="alert-banner" style="margin-top: 20px; background:#F4EDE4;">
+                <i class="fas fa-bell"></i>
+                <span>🔔 Recordatorios activos · sonido fuerte</span>
             </div>
         </div>
+        
         <div class="main-content" id="mainContent">
-            <div style="text-align: center; padding: 100px 20px; opacity:0.6;"><i class="fas fa-moon"></i> Selecciona un período para editar tu flow</div>
+            <div style="text-align: center; padding: 80px 20px; opacity: 0.6;">
+                <i class="fas fa-spinner fa-pulse"></i> Cargando tu flow...
+            </div>
         </div>
     </div>
-    <footer>✨ ritmo, no presión · constancia, no intensidad ✨</footer>
+    <footer>⏰ Sistema de alertas constantes · Sincronizado con tu horario real</footer>
 </div>
-<div id="alarmModal" class="modal">
-    <div class="modal-card">
-        <div class="flex-between"><h3><i class="fas fa-bell"></i> Recordatorios suaves</h3><button id="closeModalBtn" style="background:none; font-size:28px;">&times;</button></div>
-        <div id="alarmsList" style="max-height:200px; overflow:auto; margin:12px 0;"></div>
-        <div style="display:flex; flex-wrap:wrap; gap:8px;">
-            <input type="time" id="alarmTime" placeholder="HH:MM">
-            <input type="text" id="alarmMsg" placeholder="Mensaje">
-            <input type="text" id="alarmDays" placeholder="Días (0=Lun..6=Dom)">
-            <button id="addAlarmBtn" class="btn-cozy">+ Agregar</button>
-        </div>
-    </div>
-</div>
+
 <script>
-    // --------------------------------------------------------------
-    // HORARIO REAL YOUTUBER (12 meses)
-    // --------------------------------------------------------------
+    // ==============================================================
+    // DATOS EXACTOS DEL HORARIO (15 MAYO 2026 - 30 ABRIL 2027)
+    // ==============================================================
     const PERIODOS = [
-        "15-31 MAY 2026 (Nocturno·11am)",
-        "1-30 JUN 2026 (Estándar·8am)","1-31 JUL 2026 (Estándar·8am)","1-31 AGO 2026 (Estándar·8am)",
-        "1-30 SEP 2026 (Estándar·8am)","1-31 OCT 2026 (Estándar·8am)","1-30 NOV 2026 (Estándar·8am)",
-        "1-31 DIC 2026 (Estándar·8am)","1-31 ENE 2027 (Estándar·8am)","1-28 FEB 2027 (Estándar·8am)",
-        "1-31 MAR 2027 (Estándar·8am)","1-30 ABR 2027 (Estándar·8am)"
+        "15-31 MAY 2026 (Nocturno · 11am)",
+        "1-30 JUN 2026 (Estándar · 8am)",
+        "1-31 JUL 2026 (Estándar · 8am)",
+        "1-31 AGO 2026 (Estándar · 8am)",
+        "1-30 SEP 2026 (Estándar · 8am)",
+        "1-31 OCT 2026 (Estándar · 8am)",
+        "1-30 NOV 2026 (Estándar · 8am)",
+        "1-31 DIC 2026 (Estándar · 8am)",
+        "1-31 ENE 2027 (Estándar · 8am)",
+        "1-28 FEB 2027 (Estándar · 8am)",
+        "1-31 MAR 2027 (Estándar · 8am)",
+        "1-30 ABR 2027 (Estándar · 8am)"
     ];
     
-    // PLANTILLA EXACTA según el prompt (Nocturno vs Estándar)
-    const getDefaultHorario = (periodName) => {
-        const isNocturno = periodName.includes("Nocturno");
-        if(isNocturno) {
-            return [
-                {hora:"11:00",actividad:"Levantarse + Higiene + Lavar dientes",duracion:15,notas:"Despertar"},
-                {hora:"11:15",actividad:"Tiempo libre (despertar bien)",duracion:15,notas:""},
-                {hora:"11:30",actividad:"Desayuno",duracion:30,notas:""},
-                {hora:"12:00",actividad:"Estudio de cocina",duracion:90,notas:""},
-                {hora:"13:30",actividad:"Tiempo libre",duracion:30,notas:""},
-                {hora:"14:00",actividad:"Almuerzo",duracion:30,notas:""},
-                {hora:"14:30",actividad:"Tiempo libre (digestión)",duracion:30,notas:""},
-                {hora:"15:00",actividad:"BLENDER (L,Mi,V)",duracion:90,notas:"3D/edición"},
-                {hora:"16:30",actividad:"Tiempo libre",duracion:30,notas:""},
-                {hora:"17:00",actividad:"EJERCICIO (Mar,Jue,Sáb)",duracion:60,notas:""},
-                {hora:"18:00",actividad:"Tiempo libre / ducha",duracion:30,notas:""},
-                {hora:"18:30",actividad:"BLENDER (Mar,Jue,Sáb,Dom)",duracion:90,notas:""},
-                {hora:"20:00",actividad:"Once",duracion:30,notas:""},
-                {hora:"20:30",actividad:"Tiempo libre",duracion:90,notas:""},
-                {hora:"22:00",actividad:"Blender opcional / edición",duracion:90,notas:""},
-                {hora:"23:30",actividad:"Preparar dormir + Lavar dientes",duracion:15,notas:""},
-                {hora:"23:45",actividad:"Leer o relajarse",duracion:15,notas:""},
-                {hora:"00:00",actividad:"Dormir",duracion:660,notas:"11h"}
-            ];
-        } else {
-            return [
-                {hora:"08:00",actividad:"Levantarse + Higiene + Lavar dientes",duracion:15,notas:""},
-                {hora:"08:15",actividad:"Tiempo libre (despertar bien)",duracion:15,notas:""},
-                {hora:"08:30",actividad:"Desayuno",duracion:30,notas:""},
-                {hora:"09:00",actividad:"Estudio de cocina",duracion:90,notas:""},
-                {hora:"10:30",actividad:"Tiempo libre",duracion:30,notas:""},
-                {hora:"11:00",actividad:"BLOCKER A: BLENDER (Lun,Vie)",duracion:90,notas:""},
-                {hora:"12:30",actividad:"Tiempo libre",duracion:30,notas:""},
-                {hora:"13:00",actividad:"Almuerzo",duracion:60,notas:""},
-                {hora:"14:00",actividad:"Tiempo libre / siesta",duracion:60,notas:""},
-                {hora:"15:00",actividad:"BLOCKER B: BLENDER (Mié,Dom)",duracion:90,notas:""},
-                {hora:"16:30",actividad:"Tiempo libre",duracion:30,notas:""},
-                {hora:"17:00",actividad:"EJERCICIO (Mar,Jue)",duracion:30,notas:""},
-                {hora:"17:30",actividad:"Ducha y tiempo libre",duracion:30,notas:""},
-                {hora:"18:00",actividad:"Once",duracion:30,notas:""},
-                {hora:"18:30",actividad:"Tiempo libre / edición ligera",duracion:90,notas:""},
-                {hora:"20:00",actividad:"Tiempo libre sin pantallas",duracion:90,notas:""},
-                {hora:"21:30",actividad:"Preparar dormir + Lavar dientes",duracion:15,notas:""},
-                {hora:"21:45",actividad:"Leer o relajarse en cama",duracion:15,notas:""},
-                {hora:"22:00",actividad:"Dormir",duracion:600,notas:"10h"}
-            ];
-        }
+    // Temas mensuales para YouTube (inspiración)
+    const TEMAS_MENSUALES = {
+        "1-30 JUN 2026 (Estándar · 8am)": "🎬 La nostalgia que no nos pertenece",
+        "1-31 JUL 2026 (Estándar · 8am)": "🎬 La paradoja de estar siempre conectado",
+        "1-31 AGO 2026 (Estándar · 8am)": "🎬 El parálisis por exceso de opciones",
+        "1-30 SEP 2026 (Estándar · 8am)": "🎬 Lugares que no deberían existir",
+        "1-31 OCT 2026 (Estándar · 8am)": "🎬 La mentira de la productividad",
+        "1-30 NOV 2026 (Estándar · 8am)": "🎬 Lo que el internet nos quitó",
+        "1-31 DIC 2026 (Estándar · 8am)": "🎬 Miedos generacionales silenciosos",
+        "1-31 ENE 2027 (Estándar · 8am)": "🎬 El costo de la 'estética'",
+        "1-28 FEB 2027 (Estándar · 8am)": "🎬 La saturación del mundo moderno",
+        "1-31 MAR 2027 (Estándar · 8am)": "🎬 Cómo nos queremos hoy",
+        "1-30 ABR 2027 (Estándar · 8am)": "🎬 Cerrando el ciclo"
     };
     
-    // Temas YouTube por mes
-    const temasYoutube = {
-        "1-30 JUN 2026 (Estándar·8am)":"La nostalgia que no nos pertenece",
-        "1-31 JUL 2026 (Estándar·8am)":"La paradoja de estar siempre conectado",
-        "1-31 AGO 2026 (Estándar·8am)":"El parálisis por exceso de opciones",
-        "1-30 SEP 2026 (Estándar·8am)":"Lugares que no deberían existir",
-        "1-31 OCT 2026 (Estándar·8am)":"La mentira de la productividad",
-        "1-30 NOV 2026 (Estándar·8am)":"Lo que el internet nos quitó",
-        "1-31 DIC 2026 (Estándar·8am)":"Miedos generacionales silenciosos",
-        "1-31 ENE 2027 (Estándar·8am)":"El costo de la 'estética'",
-        "1-28 FEB 2027 (Estándar·8am)":"La saturación del mundo moderno",
-        "1-31 MAR 2027 (Estándar·8am)":"Cómo nos queremos hoy",
-        "1-30 ABR 2027 (Estándar·8am)":"Cerrando el ciclo"
-    };
+    // Horarios base (solo lectura, exacto al prompt)
+    const HORARIO_NOCTURNO = [
+        { hora: "11:00", actividad: "Levantarse + Higiene + Lavar dientes", duracion: 15, notas: "Despertar nocturno" },
+        { hora: "11:15", actividad: "Tiempo libre (despertar bien)", duracion: 15, notas: "" },
+        { hora: "11:30", actividad: "Desayuno", duracion: 30, notas: "" },
+        { hora: "12:00", actividad: "Estudio de cocina", duracion: 90, notas: "" },
+        { hora: "13:30", actividad: "Tiempo libre", duracion: 30, notas: "" },
+        { hora: "14:00", actividad: "Almuerzo", duracion: 30, notas: "" },
+        { hora: "14:30", actividad: "Tiempo libre (digestión)", duracion: 30, notas: "" },
+        { hora: "15:00", actividad: "BLENDER (L, Mi, V)", duracion: 90, notas: "3D / Edición" },
+        { hora: "16:30", actividad: "Tiempo libre", duracion: 30, notas: "" },
+        { hora: "17:00", actividad: "EJERCICIO (Mar, Jue, Sáb)", duracion: 60, notas: "Rutina" },
+        { hora: "18:00", actividad: "Tiempo libre / ducha", duracion: 30, notas: "" },
+        { hora: "18:30", actividad: "BLENDER (Mar, Jue, Sáb, Dom)", duracion: 90, notas: "" },
+        { hora: "20:00", actividad: "Once", duracion: 30, notas: "" },
+        { hora: "20:30", actividad: "Tiempo libre", duracion: 90, notas: "" },
+        { hora: "22:00", actividad: "Blender opcional / edición", duracion: 90, notas: "" },
+        { hora: "23:30", actividad: "Preparar dormir + Lavar dientes", duracion: 15, notas: "" },
+        { hora: "23:45", actividad: "Leer o relajarse", duracion: 15, notas: "" },
+        { hora: "00:00", actividad: "Dormir", duracion: 660, notas: "11h de sueño" }
+    ];
     
-    // Estados globales
+    const HORARIO_ESTANDAR = [
+        { hora: "08:00", actividad: "Levantarse + Higiene + Lavar dientes", duracion: 15, notas: "" },
+        { hora: "08:15", actividad: "Tiempo libre (despertar bien)", duracion: 15, notas: "" },
+        { hora: "08:30", actividad: "Desayuno", duracion: 30, notas: "" },
+        { hora: "09:00", actividad: "Estudio de cocina", duracion: 90, notas: "" },
+        { hora: "10:30", actividad: "Tiempo libre", duracion: 30, notas: "" },
+        { hora: "11:00", actividad: "BLOCKER A: BLENDER (Lun, Vie)", duracion: 90, notas: "Enfoque 3D" },
+        { hora: "12:30", actividad: "Tiempo libre", duracion: 30, notas: "" },
+        { hora: "13:00", actividad: "Almuerzo", duracion: 60, notas: "" },
+        { hora: "14:00", actividad: "Tiempo libre / siesta corta", duracion: 60, notas: "" },
+        { hora: "15:00", actividad: "BLOCKER B: BLENDER (Mié, Dom)", duracion: 90, notas: "" },
+        { hora: "16:30", actividad: "Tiempo libre", duracion: 30, notas: "" },
+        { hora: "17:00", actividad: "EJERCICIO (Mar, Jue)", duracion: 30, notas: "Cardio/Fuerza" },
+        { hora: "17:30", actividad: "Ducha y tiempo libre", duracion: 30, notas: "" },
+        { hora: "18:00", actividad: "Once", duracion: 30, notas: "" },
+        { hora: "18:30", actividad: "Tiempo libre / edición ligera", duracion: 90, notas: "" },
+        { hora: "20:00", actividad: "Tiempo libre sin pantallas", duracion: 90, notas: "Lectura / descanso" },
+        { hora: "21:30", actividad: "Preparar dormir + Lavar dientes", duracion: 15, notas: "" },
+        { hora: "21:45", actividad: "Leer o relajarse en cama", duracion: 15, notas: "" },
+        { hora: "22:00", actividad: "Dormir", duracion: 600, notas: "10h reparadoras" }
+    ];
+    
+    // Calendario YouTube fijo (días de publicación)
+    const YOUTUBE_SHORTS_DIAS = [1, 3, 5, 7, 9, 11, 13];
+    const YOUTUBE_LARGO_DIA = 28;
+    
+    // Estado
     let currentPeriod = PERIODOS[0];
-    let horariosData = {};
-    let youtubeEvents = {};
-    let alarms = [];
-    let habitsData = {};
-    let todoData = { daily: {}, weekly: {} };
+    let chartInstance = null;
+    let alarmCheckerInterval;
     
-    function saveAll() {
-        localStorage.setItem("RitmoLab_horarios", JSON.stringify(horariosData));
-        localStorage.setItem("RitmoLab_youtube", JSON.stringify(youtubeEvents));
-        localStorage.setItem("RitmoLab_alarms", JSON.stringify(alarms));
-        localStorage.setItem("RitmoLab_habits", JSON.stringify(habitsData));
-        localStorage.setItem("RitmoLab_todo", JSON.stringify(todoData));
-    }
-    function loadAll() {
-        let h = localStorage.getItem("RitmoLab_horarios");
-        if(h) horariosData = JSON.parse(h);
-        let yt = localStorage.getItem("RitmoLab_youtube");
-        if(yt) youtubeEvents = JSON.parse(yt);
-        let alm = localStorage.getItem("RitmoLab_alarms");
-        if(alm) alarms = JSON.parse(alm);
-        let hab = localStorage.getItem("RitmoLab_habits");
-        if(hab) habitsData = JSON.parse(hab);
-        let td = localStorage.getItem("RitmoLab_todo");
-        if(td) todoData = JSON.parse(td);
-        PERIODOS.forEach(p => { if(!horariosData[p]) horariosData[p] = getDefaultHorario(p); });
-        if(!todoData.daily) todoData.daily = {};
-        if(!todoData.weekly) todoData.weekly = {};
-        saveAll();
+    // Obtener horario según período
+    function getHorario(periodName) {
+        return periodName.includes("Nocturno") ? [...HORARIO_NOCTURNO] : [...HORARIO_ESTANDAR];
     }
     
-    // Helper Youtube eventos por defecto
-    function getYtEvents(period) {
-        if(youtubeEvents[period]) return youtubeEvents[period];
-        let ev = [];
-        for(let d=1; d<=31; d++) {
-            if([1,3,5,7,9,11,13].includes(d)) ev.push({dia:d, titulo:"📹 Short · reflexivo", tipo:"short"});
-            if(d===28) ev.push({dia:d, titulo:"🎬 Video Largo · tema mensual", tipo:"largo"});
+    // Generar eventos YouTube para el mes
+    function getYoutubeEvents(periodName) {
+        let events = [];
+        for (let d = 1; d <= 31; d++) {
+            if (YOUTUBE_SHORTS_DIAS.includes(d)) {
+                events.push({ dia: d, tipo: "short", titulo: "📹 Short · Reflexivo" });
+            }
+            if (d === YOUTUBE_LARGO_DIA) {
+                let tema = TEMAS_MENSUALES[periodName] || "🎬 Video Largo Mensual";
+                events.push({ dia: d, tipo: "largo", titulo: tema });
+            }
         }
-        youtubeEvents[period] = ev;
-        return ev;
+        return events.sort((a,b) => a.dia - b.dia);
     }
     
-    // Donut chart
-    let chart;
+    // Obtener actividad actual basada en la hora real
+    function getCurrentActivity(horario) {
+        const now = new Date();
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+        for (let row of horario) {
+            let [h, m] = row.hora.split(":").map(Number);
+            let activityStart = h * 60 + m;
+            let duration = parseInt(row.duracion) || 0;
+            let activityEnd = activityStart + duration;
+            if (currentMinutes >= activityStart && currentMinutes < activityEnd) {
+                return { actividad: row.actividad, inicio: row.hora, duracion: row.duracion };
+            }
+        }
+        return null;
+    }
+    
+    // Renderizar donut chart
     function renderDonut(rows) {
-        let canvas = document.getElementById('donutChart');
-        if(!canvas) return;
-        let sums = new Map();
-        rows.forEach(r => { let d = parseInt(r.duracion)||0; sums.set(r.actividad, (sums.get(r.actividad)||0)+d); });
-        let labels=[], data=[], bg=[];
-        let coloresFijos = {"Levantarse + Higiene + Lavar dientes":"#E8D5CC","Desayuno":"#F5E8C7","Estudio de cocina":"#C7D9C5","BLENDER (L,Mi,V)":"#B8D4E3","BLOCKER A: BLENDER (Lun,Vie)":"#B8D4E3","BLOCKER B: BLENDER (Mié,Dom)":"#B8D4E3","BLENDER (Mar,Jue,Sáb,Dom)":"#B8D4E3","EJERCICIO (Mar,Jue,Sáb)":"#E2C2B3","EJERCICIO (Mar,Jue)":"#E2C2B3","Tiempo libre":"#D6D6D6","Almuerzo":"#F0D9B5","Once":"#D9C5B3","Preparar dormir + Lavar dientes":"#C5D6D9","Dormir":"#B3C4C4","Leer o relajarse":"#E2CFC0"};
-        for(let [act, mins] of sums) {
-            if(mins/1440<0.01) continue;
-            labels.push(act);
+        const canvas = document.getElementById('donutChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let activitySum = new Map();
+        rows.forEach(row => {
+            let act = row.actividad;
+            let dur = parseInt(row.duracion) || 0;
+            activitySum.set(act, (activitySum.get(act) || 0) + dur);
+        });
+        let labels = [], data = [], bgColors = [];
+        const colorMap = {
+            "Levantarse + Higiene + Lavar dientes": "#E8D5CC", "Desayuno": "#F5E8C7", "Estudio de cocina": "#C7D9C5",
+            "BLENDER (L, Mi, V)": "#B8D4E3", "BLOCKER A: BLENDER (Lun, Vie)": "#B8D4E3", "BLOCKER B: BLENDER (Mié, Dom)": "#B8D4E3",
+            "BLENDER (Mar, Jue, Sáb, Dom)": "#B8D4E3", "EJERCICIO (Mar, Jue, Sáb)": "#E2C2B3", "EJERCICIO (Mar, Jue)": "#E2C2B3",
+            "Tiempo libre": "#D6D6D6", "Almuerzo": "#F0D9B5", "Once": "#D9C5B3", "Preparar dormir + Lavar dientes": "#C5D6D9",
+            "Dormir": "#B3C4C4", "Leer o relajarse": "#E2CFC0", "Tiempo libre sin pantallas": "#D6D6D6"
+        };
+        for (let [act, mins] of activitySum) {
+            if (mins / 1440 < 0.01) continue;
+            labels.push(act.length > 25 ? act.slice(0,22)+"..." : act);
             data.push(mins);
-            bg.push(coloresFijos[act] || `hsl(${(act.length*57)%360}, 65%, 78%)`);
+            bgColors.push(colorMap[act] || `hsl(${(act.length * 43) % 360}, 65%, 78%)`);
         }
-        if(chart) chart.destroy();
-        chart = new Chart(canvas, { type:'doughnut', data:{ labels, datasets:[{ data, backgroundColor:bg, cutout:'68%' }] }, options:{ plugins:{ tooltip:{ callbacks:{ label:(ctx)=>`${ctx.label}: ${(ctx.raw/60).toFixed(1)}h (${((ctx.raw/1440)*100).toFixed(1)}%)` } } } } });
+        if (chartInstance) chartInstance.destroy();
+        chartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: { labels, datasets: [{ data, backgroundColor: bgColors, cutout: '68%', borderWidth: 0 }] },
+            options: { responsive: true, maintainAspectRatio: true, plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${(ctx.raw/60).toFixed(1)}h (${((ctx.raw/1440)*100).toFixed(1)}%)` } } } }
+        });
     }
     
-    // ========== RENDER COMPLETO con INFO, TO-DO diario/semanal ==========
-    function renderFullView(period) {
-        let rows = horariosData[period];
-        let youtubeList = getYtEvents(period);
-        let temaMes = temasYoutube[period] || "Tema especial del mes";
-        let todayStr = new Date().toISOString().slice(0,10);
-        if(!todoData.daily[todayStr]) todoData.daily[todayStr] = ["Editar video", "Revisar métricas", "Responder comunidad"];
-        let currentWeekKey = getWeekKey();
-        if(!todoData.weekly[currentWeekKey]) todoData.weekly[currentWeekKey] = ["Planificar guion", "Grabar Short x3", "Thumbnail semanal"];
+    // Render completo (solo informativo)
+    function renderPeriodView(period) {
+        const horario = getHorario(period);
+        const youtubeEvents = getYoutubeEvents(period);
+        const temaActual = TEMAS_MENSUALES[period] || "Tema especial del mes";
+        const isNocturno = period.includes("Nocturno");
         
         const mainDiv = document.getElementById('mainContent');
         mainDiv.innerHTML = `
-            <div class="cozy-card">
-                <div class="card-title"><i class="fas fa-info-circle"></i> 📋 Info Personal · Youtuber</div>
-                <div class="info-badge"><i class="fas fa-calendar-week"></i> <strong>${period}</strong> — Tema del mes: “${temaMes}”</div>
-                <div class="info-badge"><i class="fas fa-dumbbell"></i> Rutina ejercicio: ${period.includes("Nocturno") ? "Martes/Jueves/Sábado 17h" : "Martes/Jueves 17h + Sábado 10h"}</div>
-                <div class="info-badge"><i class="fas fa-cube"></i> Blender: ${period.includes("Nocturno") ? "Lun/Mi/Vie 15h + Mar/Jue/Sáb/Dom 18:30h" : "Lun/Vie 11h (A) · Mié/Dom 15h (B)"}</div>
+            <div class="info-card">
+                <div class="card-header"><i class="fas fa-info-circle"></i> Panorama General · Youtuber</div>
+                <div class="info-grid">
+                    <div class="info-badge"><strong>📅 Período activo</strong><span>${period}</span></div>
+                    <div class="info-badge"><strong>🎯 Tema del mes</strong><span>${temaActual}</span></div>
+                    <div class="info-badge"><strong>💪 Rutina ejercicio</strong><span>${isNocturno ? "Mar/Jue/Sáb 17:00" : "Mar/Jue 17:00 + Sáb 10:00"}</span></div>
+                    <div class="info-badge"><strong>🖥️ Blender</strong><span>${isNocturno ? "L/Mi/V 15h · Ma/Ju/S/D 18:30h" : "Lun/Vie 11h (A) · Mié/Dom 15h (B)"}</span></div>
+                </div>
             </div>
-            <div class="cozy-card">
-                <div class="card-title"><i class="fas fa-list-check"></i> ✅ To-Do Diario · ${todayStr}</div>
-                <div id="dailyTodoList"></div>
-                <button class="btn-cozy" id="addDailyTaskBtn" style="margin-top:12px;"><i class="fas fa-plus"></i> Añadir tarea diaria</button>
+            
+            <div class="info-card">
+                <div class="card-header"><i class="fas fa-table-list"></i> Horario Diario · ${period.includes("Nocturno") ? "Nocturno" : "Estándar"}</div>
+                <div class="schedule-wrapper">
+                    <table class="horario-table">
+                        <thead><tr><th>Hora</th><th>Actividad</th><th>Duración</th><th>Notas</th></tr></thead>
+                        <tbody id="scheduleBody"></tbody>
+                    </table>
+                </div>
             </div>
-            <div class="cozy-card">
-                <div class="card-title"><i class="fas fa-calendar-week"></i> 📅 To-Do Semanal (${currentWeekKey})</div>
-                <div id="weeklyTodoList"></div>
-                <button class="btn-cozy" id="addWeeklyTaskBtn" style="margin-top:12px;"><i class="fas fa-plus"></i> Añadir tarea semanal</button>
-            </div>
-            <div class="cozy-card">
-                <div class="card-title"><i class="fas fa-clock"></i> 🕒 Editor de Horario (click para editar)</div>
-                <div style="overflow-x:auto;"><table class="horario-table" id="editTable"><thead><tr><th>Hora</th><th>Actividad</th><th>Duración(min)</th><th>Notas</th><th></th></tr></thead><tbody id="tableBody"></tbody></table></div>
-                <div class="flex-between" style="margin-top:18px;"><button id="addRowBtn" class="btn-cozy"><i class="fas fa-plus-circle"></i> Agregar actividad</button><button id="alarmBtn" class="btn-cozy"><i class="fas fa-bell"></i> Alarmas</button></div>
-            </div>
-            <div class="cozy-card">
-                <div class="card-title"><i class="fas fa-chart-pie"></i> Distribución del día</div>
+            
+            <div class="info-card">
+                <div class="card-header"><i class="fas fa-chart-pie"></i> Distribución del día (24h)</div>
                 <div class="donut-wrapper"><canvas id="donutChart" width="240" height="240"></canvas></div>
             </div>
-            <div class="cozy-card">
-                <div class="card-title"><i class="fab fa-youtube"></i> Calendario Contenido</div>
-                <div id="youtubeList" class="flex-between" style="flex-wrap:wrap; gap:8px;"></div>
-                <button id="addYoutubeEvent" class="btn-cozy mt-3"><i class="fas fa-plus"></i> Evento custom</button>
+            
+            <div class="info-card">
+                <div class="card-header"><i class="fab fa-youtube"></i> Calendario de Contenido · Publicaciones</div>
+                <div class="youtube-grid" id="youtubeGrid"></div>
+                <div style="margin-top: 16px; font-size:0.75rem; color:#A48E74;"><i class="fas fa-calendar-day"></i> Shorts: días 1,3,5,7,9,11,13 · Video largo: día 28</div>
+            </div>
+            
+            <div class="info-card" id="nowPlayingCard">
+                <div class="card-header"><i class="fas fa-hourglass-half"></i> 🕐 Ahora mismo en tu rutina</div>
+                <div id="currentActivityDisplay" style="font-size:1rem; padding:12px; background:#FAF4EC; border-radius:28px;"></div>
             </div>
         `;
-        // Tabla editable
-        const tbody = document.getElementById('tableBody');
-        function renderTable() {
-            tbody.innerHTML = '';
-            rows.forEach((row, idx) => {
-                let tr = document.createElement('tr');
-                tr.innerHTML = `<td><span contenteditable="true" class="editable-cell" data-field="hora" data-idx="${idx}">${row.hora}</span></td>
-                                <td><span contenteditable="true" class="editable-cell" data-field="actividad" data-idx="${idx}">${row.actividad}</span></td>
-                                <td><span contenteditable="true" class="editable-cell" data-field="duracion" data-idx="${idx}">${row.duracion}</span></td>
-                                <td><span contenteditable="true" class="editable-cell" data-field="notas" data-idx="${idx}">${row.notas}</span></td>
-                                <td><button class="btn-cozy deleteRow" data-idx="${idx}" style="background:#F2E5D8;"><i class="fas fa-trash"></i></button></td>`;
-                tbody.appendChild(tr);
-            });
-            attachEditEvents();
-        }
-        function attachEditEvents() {
-            document.querySelectorAll('.editable-cell').forEach(cell => {
-                cell.addEventListener('blur', (e) => {
-                    let idx = parseInt(cell.dataset.idx);
-                    let field = cell.dataset.field;
-                    let val = cell.innerText.trim();
-                    if(field==='hora' && !/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(val)) { alert("Hora inválida (HH:MM)"); cell.innerText = rows[idx].hora; return; }
-                    rows[idx][field] = (field==='duracion') ? parseInt(val)||0 : val;
-                    horariosData[period] = rows;
-                    saveAll();
-                    renderDonut(rows);
-                });
-            });
-            document.querySelectorAll('.deleteRow').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    let idx = parseInt(btn.dataset.idx);
-                    rows.splice(idx,1);
-                    horariosData[period] = rows;
-                    saveAll();
-                    renderFullView(period);
-                });
-            });
-        }
-        renderTable();
-        renderDonut(rows);
-        // To-Do Diario
-        function refreshDaily() {
-            let dailyTasks = todoData.daily[todayStr] || [];
-            const container = document.getElementById('dailyTodoList');
-            container.innerHTML = dailyTasks.map((t,i) => `<div class="todo-item"><input type="checkbox" class="todo-check" data-dailyidx="${i}" ${t.done ? 'checked' : ''}><span class="todo-text ${t.done ? 'todo-done' : ''}" contenteditable="true" data-dailyedit="${i}">${t.text || t}</span><button class="btn-cozy delDaily" data-dailyidx="${i}" style="padding:4px 8px;"><i class="fas fa-times"></i></button></div>`).join('');
-            document.querySelectorAll('.todo-check').forEach(ch => ch.addEventListener('change',(e)=>{
-                let idx = parseInt(ch.dataset.dailyidx);
-                if(todoData.daily[todayStr][idx]) todoData.daily[todayStr][idx].done = ch.checked;
-                else if(typeof todoData.daily[todayStr][idx] === 'string') todoData.daily[todayStr][idx] = {text: todoData.daily[todayStr][idx], done:ch.checked};
-                saveAll(); refreshDaily();
-            }));
-            document.querySelectorAll('.delDaily').forEach(btn => btn.addEventListener('click',(e)=>{
-                let idx = parseInt(btn.dataset.dailyidx);
-                todoData.daily[todayStr].splice(idx,1);
-                saveAll(); refreshDaily();
-            }));
-            document.querySelectorAll('[data-dailyedit]').forEach(el => el.addEventListener('blur',(e)=>{
-                let idx = parseInt(el.dataset.dailyedit);
-                let newText = el.innerText;
-                if(todoData.daily[todayStr][idx]) todoData.daily[todayStr][idx].text = newText;
-                else todoData.daily[todayStr][idx] = {text:newText, done:false};
-                saveAll();
-            }));
-        }
-        refreshDaily();
-        document.getElementById('addDailyTaskBtn').addEventListener('click',()=>{
-            let newTask = prompt("Nueva tarea diaria:");
-            if(newTask) { todoData.daily[todayStr].push({text:newTask, done:false}); saveAll(); refreshDaily(); }
-        });
-        function refreshWeekly() {
-            let weekTasks = todoData.weekly[currentWeekKey] || [];
-            const container = document.getElementById('weeklyTodoList');
-            container.innerHTML = weekTasks.map((t,i) => `<div class="todo-item"><input type="checkbox" class="weekly-check" data-weekidx="${i}" ${t.done ? 'checked' : ''}><span class="todo-text ${t.done ? 'todo-done' : ''}" contenteditable="true" data-weekedit="${i}">${t.text || t}</span><button class="btn-cozy delWeekly" data-weekidx="${i}" style="padding:4px 8px;"><i class="fas fa-times"></i></button></div>`).join('');
-            document.querySelectorAll('.weekly-check').forEach(ch => ch.addEventListener('change',(e)=>{
-                let idx = parseInt(ch.dataset.weekidx);
-                if(todoData.weekly[currentWeekKey][idx]) todoData.weekly[currentWeekKey][idx].done = ch.checked;
-                else if(typeof todoData.weekly[currentWeekKey][idx] === 'string') todoData.weekly[currentWeekKey][idx] = {text: todoData.weekly[currentWeekKey][idx], done:ch.checked};
-                saveAll(); refreshWeekly();
-            }));
-            document.querySelectorAll('.delWeekly').forEach(btn => btn.addEventListener('click',(e)=>{
-                let idx = parseInt(btn.dataset.weekidx);
-                todoData.weekly[currentWeekKey].splice(idx,1);
-                saveAll(); refreshWeekly();
-            }));
-            document.querySelectorAll('[data-weekedit]').forEach(el => el.addEventListener('blur',(e)=>{
-                let idx = parseInt(el.dataset.weekedit);
-                let newText = el.innerText;
-                if(todoData.weekly[currentWeekKey][idx]) todoData.weekly[currentWeekKey][idx].text = newText;
-                else todoData.weekly[currentWeekKey][idx] = {text:newText, done:false};
-                saveAll();
-            }));
-        }
-        refreshWeekly();
-        document.getElementById('addWeeklyTaskBtn').addEventListener('click',()=>{
-            let newTask = prompt("Nueva tarea semanal:");
-            if(newTask) { todoData.weekly[currentWeekKey].push({text:newTask, done:false}); saveAll(); refreshWeekly(); }
-        });
-        function renderYt(){
-            const ytDiv = document.getElementById('youtubeList');
-            ytDiv.innerHTML = youtubeList.map((ev,idx)=>`<div class="youtube-chip">📅 Día ${ev.dia} ${ev.tipo==='short'?'📹 Short':'🎬 Largo'} <input value="${ev.titulo}" data-ytidx="${idx}" style="background:transparent;border:none;width:130px;"><button data-delyt="${idx}" style="background:none;">🗑️</button></div>`).join('');
-            document.querySelectorAll('input[data-ytidx]').forEach(inp=>inp.addEventListener('change',(e)=>{ let i=parseInt(inp.dataset.ytidx); youtubeList[i].titulo=inp.value; youtubeEvents[period]=youtubeList; saveAll(); }));
-            document.querySelectorAll('[data-delyt]').forEach(btn=>btn.addEventListener('click',(e)=>{ let i=parseInt(btn.dataset.delyt); youtubeList.splice(i,1); youtubeEvents[period]=youtubeList; saveAll(); renderFullView(period); }));
-        }
-        renderYt();
-        document.getElementById('addYoutubeEvent').addEventListener('click',()=>{ let dia=prompt("Día del mes"); if(dia) { youtubeList.push({dia:parseInt(dia), titulo:"Nuevo contenido", tipo:"custom"}); youtubeEvents[period]=youtubeList; saveAll(); renderFullView(period); } });
-        document.getElementById('addRowBtn').addEventListener('click',()=>{ rows.push({hora:"12:00",actividad:"Nueva actividad",duracion:30,notas:""}); horariosData[period]=rows; saveAll(); renderFullView(period); });
-        document.getElementById('alarmBtn').addEventListener('click',()=>openModal());
+        
+        // Llenar tabla horaria
+        const tbody = document.getElementById('scheduleBody');
+        tbody.innerHTML = horario.map(row => `
+            <tr>
+                <td style="font-weight:500;">${row.hora}</td>
+                <td>${row.actividad}</td>
+                <td>${row.duracion} min</td>
+                <td style="color:#988F82;">${row.notas || "—"}</td>
+            </tr>
+        `).join('');
+        
+        // Llenar YouTube grid
+        const ytGrid = document.getElementById('youtubeGrid');
+        ytGrid.innerHTML = youtubeEvents.map(ev => `
+            <div class="yt-chip">
+                <i class="fas ${ev.tipo === 'short' ? 'fa-video' : 'fa-film'}"></i>
+                <strong>Día ${ev.dia}</strong> · ${ev.tipo === 'short' ? '📹 Short' : '🎬 Video Largo'}
+                <span style="font-size:0.7rem; opacity:0.7;">${ev.titulo}</span>
+            </div>
+        `).join('');
+        
+        renderDonut(horario);
+        updateCurrentActivity(horario);
+        
+        // Actualizar cada minuto la actividad actual
+        if (window.activityInterval) clearInterval(window.activityInterval);
+        window.activityInterval = setInterval(() => updateCurrentActivity(horario), 60000);
     }
     
-    function getWeekKey(){ let d=new Date(); let year=d.getFullYear(); let week=Math.ceil((((d-new Date(year,0,1))/86400000)+1)/7); return `${year}-W${week}`; }
-    let modal = document.getElementById('alarmModal');
-    function openModal(){ modal.style.display='flex'; renderAlarms(); }
-    function renderAlarms(){ document.getElementById('alarmsList').innerHTML=alarms.map((a,i)=>`<div>${a.hora} ${a.mensaje} <button data-delalm="${i}">❌</button></div>`).join(''); document.querySelectorAll('[data-delalm]').forEach(btn=>btn.addEventListener('click',()=>{ alarms.splice(parseInt(btn.dataset.delalm),1); saveAll(); renderAlarms(); })); }
-    document.getElementById('addAlarmBtn').addEventListener('click',()=>{ let h=document.getElementById('alarmTime').value, m=document.getElementById('alarmMsg').value, d=document.getElementById('alarmDays').value; if(h&&m){ alarms.push({hora:h, mensaje:m, dias:d?d.split(',').map(Number):[]}); saveAll(); renderAlarms(); } });
-    document.getElementById('closeModalBtn').addEventListener('click',()=>modal.style.display='none');
-    
-    function buildSidebar(){
-        const cont=document.getElementById('periodList'); cont.innerHTML='';
-        PERIODOS.forEach(p=>{ let div=document.createElement('div'); div.className=`period-item ${p===currentPeriod?'active':''}`; div.innerText=p; div.addEventListener('click',()=>{ currentPeriod=p; buildSidebar(); renderFullView(p); }); cont.appendChild(div); });
+    function updateCurrentActivity(horario) {
+        const current = getCurrentActivity(horario);
+        const displayDiv = document.getElementById('currentActivityDisplay');
+        if (!displayDiv) return;
+        if (current) {
+            displayDiv.innerHTML = `<i class="fas fa-play-circle" style="color:#E2A468;"></i> <strong>${current.actividad}</strong> · de ${current.inicio} (${current.duracion} min)`;
+        } else {
+            displayDiv.innerHTML = `<i class="fas fa-moon"></i> Descanso o fuera de horario · tiempo libre ✨`;
+        }
     }
-    document.getElementById('exportBackupBtn').addEventListener('click',()=>{ let data={horariosData,youtubeEvents,alarms,habitsData,todoData}; let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(data)],{type:'application/json'})); a.download='ritmolab_cozy.json'; a.click(); });
-    document.getElementById('importBackupBtn').addEventListener('click',()=>document.getElementById('importFile').click());
-    document.getElementById('importFile').addEventListener('change',e=>{ let f=e.target.files[0]; if(!f)return; let r=new FileReader(); r.onload=ev=>{ let data=JSON.parse(ev.target.result); if(data.horariosData)horariosData=data.horariosData; if(data.youtubeEvents)youtubeEvents=data.youtubeEvents; if(data.alarms)alarms=data.alarms; if(data.todoData)todoData=data.todoData; saveAll(); buildSidebar(); renderFullView(currentPeriod); }; r.readAsText(f); });
     
-    loadAll(); buildSidebar(); renderFullView(currentPeriod);
-    // Alarma checker
-    setInterval(()=>{ let now=new Date(); let hh=now.getHours().toString().padStart(2,'0')+":"+now.getMinutes().toString().padStart(2,'0'); alarms.forEach(a=>{ if(a.hora===hh){ if(Notification.permission==='granted') new Notification("RitmoLab",{body:a.mensaje}); else Notification.requestPermission(); } }); }, 60000);
-    if(Notification.permission!=='granted') Notification.requestPermission();
+    // ========== SISTEMA DE ALARMAS CON SONIDO FUERTE ==========
+    let audioCtx = null;
+    function playLoudBeep() {
+        try {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.type = 'square';
+            oscillator.frequency.value = 880;
+            gainNode.gain.value = 0.5;
+            oscillator.start();
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.8);
+            oscillator.stop(audioCtx.currentTime + 0.7);
+            audioCtx.resume();
+        } catch(e) { console.warn("Audio no soportado"); }
+    }
+    
+    function sendNotification(title, body) {
+        playLoudBeep();
+        if (Notification.permission === 'granted') {
+            new Notification(title, { body: body, icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='85' font-size='85' text-anchor='middle' fill='%23D4A574'%3E⏰%3C/text%3E%3C/svg%3E" });
+        } else if (Notification.permission !== 'denied') {
+            Notification.requestPermission().then(perm => { if (perm === 'granted') new Notification(title, { body }); });
+        }
+        // Fallback: alert silencioso en consola pero sonido ya se activó
+    }
+    
+    // Configurar alarmas según el horario actual (cada minuto verifica)
+    function startAlarmSystem(horarioActual) {
+        if (alarmCheckerInterval) clearInterval(alarmCheckerInterval);
+        alarmCheckerInterval = setInterval(() => {
+            const now = new Date();
+            const currentTime = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
+            // Buscar si alguna actividad empieza en este minuto exacto
+            const actividadAhora = horarioActual.find(row => row.hora === currentTime);
+            if (actividadAhora) {
+                const titulo = `🔔 RitmoLab · ${actividadAhora.actividad}`;
+                const mensaje = `⏰ Es hora de: ${actividadAhora.actividad}. ¡Mantén el ritmo!`;
+                sendNotification(titulo, mensaje);
+            }
+            // También verificar si es día de publicación de YouTube
+            const diaActual = now.getDate();
+            const esShortDay = YOUTUBE_SHORTS_DIAS.includes(diaActual);
+            const esLargoDay = diaActual === YOUTUBE_LARGO_DIA;
+            if (esShortDay && now.getHours() === 10 && now.getMinutes() === 0) {
+                sendNotification("📹 Día de Short!", "Hoy toca grabar y publicar tu Short diario. ¡Contenido fresco!");
+            }
+            if (esLargoDay && now.getHours() === 12 && now.getMinutes() === 0) {
+                sendNotification("🎬 Video Largo del Mes", "Prepara la edición final y sube tu video del día 28.");
+            }
+        }, 60000);
+    }
+    
+    // Actualizar sistema de alarmas cuando cambia el período
+    function refreshAlarmsForPeriod(period) {
+        const horario = getHorario(period);
+        startAlarmSystem(horario);
+    }
+    
+    // Sidebar
+    function buildSidebar() {
+        const container = document.getElementById('periodList');
+        container.innerHTML = '';
+        PERIODOS.forEach(p => {
+            const div = document.createElement('div');
+            div.className = `period-item ${p === currentPeriod ? 'active' : ''}`;
+            div.innerHTML = `<i class="fas fa-${p.includes('Nocturno') ? 'moon' : 'sun'}"></i> ${p}`;
+            div.addEventListener('click', () => {
+                currentPeriod = p;
+                buildSidebar();
+                renderPeriodView(p);
+                refreshAlarmsForPeriod(p);
+            });
+            container.appendChild(div);
+        });
+    }
+    
+    // Reloj en vivo    function updateClock() {
+        const clockEl = document.getElementById('liveClock');
+        if (clockEl) {
+            const now = new Date();
+            clockEl.innerHTML = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+        requestAnimationFrame(() => setTimeout(updateClock, 1000));
+    }
+    
+    // Inicialización
+    function init() {
+        buildSidebar();
+        renderPeriodView(currentPeriod);
+        refreshAlarmsForPeriod(currentPeriod);
+        updateClock();
+        // Solicitar permiso de notificaciones al inicio
+        if (Notification.permission === 'default') Notification.requestPermission();
+    }
+    
+    init();
 </script>
 </body>
 </html>
